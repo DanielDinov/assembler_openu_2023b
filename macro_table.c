@@ -39,11 +39,21 @@ macroItem* createMacro(const char* key, unsigned long value, const char* text)
 	if (item == NULL)
 	{
 		printf("Memory allocation failed for new macro. \n");
-		exit(1);
+		exit(0);
 	}
 	item->key = (char*) malloc(strlen(key) + 1);
+	if (item->key == NULL)
+	{
+		printf("Memory allocation failed for new macro key. \n");
+		exit(0);
+	}
 	item->hashValue = value;
 	item->text = (char*) malloc(strlen(text) + 1);
+	if (item->text == NULL)
+	{
+		printf("Memory allocation failed for new macro text. \n");
+		exit(0);
+	}
 	strcpy(item->key, key);
 	strcpy(item->text, text);
 	return item;
@@ -53,9 +63,19 @@ macroItem* createMacro(const char* key, unsigned long value, const char* text)
 macroTable* createMacroTable(int size)
 {
 	macroTable* table = (macroTable*)malloc(sizeof(macroTable));
+	if (table == NULL)
+	{
+		printf("Memory allocation failed for new macro table. \n");
+		exit(0);
+	}
 	table->size = size;
 	table->count = 0;
-	table->items = (macroItem**)calloc(table->size, sizeof(macroItem*)); /*allocate array*/
+	table->items = (macroItem**)calloc(table->size, sizeof(macroItem*)); /*allocate for array*/
+	if (table->items == NULL)
+	{
+		printf("Memory allocation failed for new macro table. \n");
+		exit(0);
+	}
 
 	for (int i = 0; i < table->size; i++)
 	{
@@ -106,6 +126,26 @@ bool searchMacro(macroTable* table, char* macroName)
 		item = table->items[index];
 	}
 	return false;
+}
+
+/*return pointer to existing macro*/
+macroItem* getMacro(macroTable* table, char* macroName)
+{
+	unsigned long index = macroHash(table->size, macroName, 0);
+	int probsCount = 0; /* to compare to max prob of the table */
+	macroItem* item = table->items[index];
+
+	while (item != NULL)
+	{
+		if (strcmp(item->key, macroName) == 0)
+			return item;
+		if (probsCount == table->maxProbs)
+			return NULL;
+		probsCount++;
+		index = macroHash(table->size, macroName, index);
+		item = table->items[index];
+	}
+	return NULL;
 }
 
 /*insert item to the table*/

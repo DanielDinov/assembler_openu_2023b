@@ -3,6 +3,9 @@
 
 #include <stdbool.h>
 
+/* hashing function */
+unsigned long macroHash(int size, char* macroName, unsigned long hash);
+
 /* Defines the HashTable item */
 typedef struct Ht_item
 {
@@ -21,7 +24,7 @@ typedef struct HashTable
 } macroTable;
 
 /* Creates a macro item */
-macroItem* createMacro(char* key, unsigned long value);
+macroItem* createMacro(const char* key, unsigned long value, const char* text);
 
 /* Creates a macro table */
 macroTable* createMacroTable(int size);
@@ -34,6 +37,9 @@ void freeMacroTable(macroTable* table);
 
 /* Searches for a macro item in the table */
 bool searchMacro(macroTable* table, char* macroName);
+
+/* return a pointer to an existing macro item */
+macroItem* getMacro(macroTable* table, char* macroName);
 
 /* Inserts an item into the table */
 void insertMacro(macroTable* table, macroItem* newItem, char* key, unsigned long value);
