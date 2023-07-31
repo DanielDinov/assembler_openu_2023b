@@ -114,7 +114,10 @@ FILE* macroUnfold(FILE* file)
     /* if macro found then create a table for macros and unfold (loop 2 and 3) */
     if (counter > 0)
     {
+        printf("counter: %d\n", counter);/*tester remove*/
         MACROS = createMacroTable(counter);
+        printf("created Macro table\n");
+        printf("size: %d\n", MACROS->size);
         macroContent = (char*)malloc(macroLength * sizeof(char)); /* initializng a char array large enough to fit macro content */
         if (macroContent == NULL)
         {
@@ -137,12 +140,14 @@ FILE* macroUnfold(FILE* file)
                 /* endmcro: submit the contnet in and reset the string*/
                 if (strcmp(token, "endmcro") == 0)
                 {
-                    hash = macroHash(counter, macroName, 0);
+                    hash = macroHash(MACROS->size, macroName, 0);
+                    printf("macroName to be passed: %s\n", macroName);/*tester remove*/
                     newMacro = createMacro(macroName, hash, macroContent);
                     printf("createad macro succesfully\n");
-                    newMacro->text = strdup(macroContent);
+                    strcpy(newMacro->text, macroContent);
                     printf("macro content was added: %s\n", newMacro->text);
                     insertMacro(MACROS, newMacro, macroName, hash);
+                    printf("name: %s\n", newMacro->key);/*tester remove*/
                     openMacro = false;
                     macroContent[0] = '\0';
                 }
@@ -150,8 +155,8 @@ FILE* macroUnfold(FILE* file)
                 /* openMacro: add new words to content buffer*/
                 if (openMacro)
                 {
-                    strcat(macroContent, " ");
                     strcat(macroContent, token);
+                    strcat(macroContent, " ");
                 }
 
                 /* encounterd 'mcro' last iteration: look up in the table, if exist - error, else insert */
@@ -165,7 +170,7 @@ FILE* macroUnfold(FILE* file)
                     
                     else
                     {
-                        macroName = token;
+                        macroName = strdup(token);
                         printf("printing macro name: %s\n", macroName);
                         openMacro = true; /*flag for next iterations to gather macro content*/
                         addMacro = false;
@@ -187,6 +192,14 @@ FILE* macroUnfold(FILE* file)
             }
         }
         printf("pass loop (2)\n\n");/*tester remove*/
+        printf("table size: %d\n", MACROS->size);
+        for (int j = 0; j < MACROS->size; j++)
+        {
+            if (MACROS->items[j] == NULL) {
+                printf("size is %d, %d is empty\n", MACROS->size, j);}
+            printf("%s\n", MACROS->items[j]->text);
+            printf("hash: %lu\n", MACROS->items[j]->hashValue);
+        }
         /*free(macroContent);*/
         rewind(file);
         /* (3) the loop below re-write the source file with the macros content */
@@ -196,6 +209,7 @@ FILE* macroUnfold(FILE* file)
             
             if (lineToIgnore(line)) 
             {
+                printf("line ignored good job\n");/*tester remove*/
                 continue;
             }
 
@@ -211,22 +225,13 @@ FILE* macroUnfold(FILE* file)
                     continue;
                 }
                 else
-                    /*unfold existing macro*/
-                printf("token in loop: %s\n", token);/*tester remove*/
-                if (searchMacro(MACROS, token))
-                {
-                    printf("found this in macro table: %s\n", token);
-                }
-                if (!searchMacro(MACROS, token))
-                {
-                    printf("didnt find this in macro table: %s\n", token);
-                }
+
+                /*unfold existing macro*/
+                
                 newMacro = getMacro(MACROS, token);
                 
                 if (newMacro != NULL)
                 {
-                    printf("try to unfold mcro\n");/*tester remove*/
-                    printf("%s\n", newMacro->text);
                     fprintf(outputFile, "%s", newMacro->text);
                     newMacro = NULL;
                     token = strtok(NULL, delims);

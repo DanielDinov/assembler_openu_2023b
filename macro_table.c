@@ -70,7 +70,7 @@ macroTable* createMacroTable(int size)
 	}
 	table->size = size;
 	table->count = 0;
-	table->items = (macroItem**)calloc(table->size, sizeof(macroItem*)); /*allocate for array*/
+	table->items = (macroItem**)calloc(table->size, sizeof(macroItem*));
 	if (table->items == NULL)
 	{
 		printf("Memory allocation failed for new macro table. \n");
