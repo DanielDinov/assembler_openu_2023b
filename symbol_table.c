@@ -22,14 +22,14 @@ symbol_data* create_new_symbol_data(char name[], int value, enum symbol_attribut
 }
 
 void add_symbol_to_list(symbol_list* list, symbol_data* data) {
+    symbol_data* current;
     if (list == NULL || data == NULL) {
         return;
     }
-    
     if (list->head == NULL) {
         list->head = data;
     } else {
-        symbol_data* current = list->head;
+        current = list->head;
         while (current->next != NULL) {
             current = current->next;
         }
@@ -38,11 +38,10 @@ void add_symbol_to_list(symbol_list* list, symbol_data* data) {
 }
 
 symbol_data* find_symbol(symbol_list* list, char name[]) {
+    symbol_data* current = list->head;
     if (list == NULL) {
         return NULL;
     }
-    
-    symbol_data* current = list->head;
     while (current != NULL) {
         if (strcmp(current->symbol.name, name) == 0) {
             return current;  // Symbol found
@@ -54,11 +53,10 @@ symbol_data* find_symbol(symbol_list* list, char name[]) {
 }
 
 int does_symbol_exist(symbol_list* list, symbol_data* data) {
+    symbol_data* current = list->head;
     if (list == NULL || data == NULL) {
         return 0;
     }
-    
-    symbol_data* current = list->head;
     while (current != NULL) {
         if (strcmp(current->symbol.name, data->symbol.name) == 0) {
             return 1;  // Symbol exists in the list
@@ -70,13 +68,13 @@ int does_symbol_exist(symbol_list* list, symbol_data* data) {
 }
 
 void free_list(symbol_list* list) {
+    symbol_data* current = list->head;
+    symbol_data* temp;
     if (list == NULL) {
         return;
     }
-    
-    symbol_data* current = list->head;
     while (current != NULL) {
-        symbol_data* temp = current;
+        temp = current;
         current = current->next;
         free(temp);
     }

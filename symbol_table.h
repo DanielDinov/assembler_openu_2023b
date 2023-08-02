@@ -1,3 +1,5 @@
+#ifndef SYMBOL_TABLE_H
+#define SYMBOL_TABLE_H
 
 #define SYMBOL_MAX_NAME_SIZE 31
 
@@ -33,3 +35,4 @@ symbol_data* find_symbol(char[]);
 int does_symbol_exist(symbol_list*,symbol_data*);
 
 void free_list(symbol_list*);
+#endif
