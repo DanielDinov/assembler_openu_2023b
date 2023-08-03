@@ -10,6 +10,25 @@
 
 const char base64Lookup[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
+const char* op_code_strings[] = {
+        "mov",
+        "cmp",
+        "add",
+        "sub",
+        "not",
+        "clr",
+        "lea",
+        "inc",
+        "dec",
+        "jmp",
+        "bne",
+        "red",
+        "prn",
+        "jsr",
+        "rts",
+        "stop"
+};
+
 int decimalToBinary(int decimal)
 {
     int binary = 0;
@@ -81,4 +100,16 @@ bool lineToIgnore(char* line)
         }
     }
     return true;
+}
+
+bool isReservedWord(char* word)
+{
+    for (int i = 0; i < sizeof(op_code_strings) / sizeof(op_code_strings[0]); i++)
+    {
+        if (strcmp(word, op_code_strings[i]) == 0)
+        {
+            return true;
+        }
+    }
+    return false;
 }

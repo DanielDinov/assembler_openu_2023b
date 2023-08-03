@@ -5,20 +5,17 @@
 #include <ctype.h>
 #include "util.h"
 #include "macro_table.h"
-#define ROW_MAX_LENGTH 81
-/*TODO: add define with words like mcro,endmcro etc...*/
-
-/* line to ignore gets a full line and check if it is a comment line or an empty line, if it is return true else false. will be transfered to util.c later */
-
+#define ROW_MAX_LENGTH 82
 
 /* first read: counting amount of macros and the length of content.
  * second read: store all the macros and their content.
  * third read: write the new output file with unfolded macros.
  */
 
-FILE* macroUnfold(FILE* file)
+FILE* macroUnfold(FILE* file, char* fileName)
 {
     const char delims[4] = " \n\t"; /* to ignore while tokenizing*/
+    const char* am_extension = ".am";
     bool openMacro = false; /* will switch to true when mcro identified, return to false when encounter endmcro */
     bool addMacro = false; /* flag for mcro decleration */
     bool skip = false; /* for printing loop */
@@ -26,13 +23,15 @@ FILE* macroUnfold(FILE* file)
     int macroLength = 0; /* count how many char to allocate for macros content */
     int temp = 0; /* for counters */
     unsigned long hash = 0; /* for hashing macros */
+    macroTable* MACROS = NULL;
     macroItem* newMacro = NULL; /* pointer to handle macro items */
     char* token = NULL; /* for all tokenizing proccess */
-    FILE* outputFile = fopen("originalName.am", "w"); /*TODO how to import name from input file and create a new file with AM*/
     char line[ROW_MAX_LENGTH];
-    macroTable* MACROS = NULL;
     char* macroContent = NULL;
     char* macroName = NULL;
+
+    strcat(fileName, am_extension);
+    FILE* outputFile = fopen(fileName, "w");
 
     /* (1) the loop below counts the amount of macros in the file to initialize and efficient table */
     while (fgets(line, ROW_MAX_LENGTH, file) != NULL)
@@ -47,7 +46,7 @@ FILE* macroUnfold(FILE* file)
         char* lengthTest = strchr(line, '\n');
         if (lengthTest == NULL)
         {
-            printf("Excceeding max length of line\n");
+            printf("ERROR: Excceeding max length of line\n");
             exit(0);
         }
         
@@ -71,6 +70,11 @@ FILE* macroUnfold(FILE* file)
 
             else if (addMacro)
             {
+                if (isReservedWord(token))
+                {
+                    printf("ERROR: Macro name is illegal (%s is a reserved word)\n", token);
+                    exit(0);
+                }
                 addMacro = false;
                 openMacro = true;
             }
@@ -130,10 +134,10 @@ FILE* macroUnfold(FILE* file)
                 /* encounterd 'mcro' last iteration: look up in the table, if exist - error, else insert */
                 if (addMacro)
                 {
-                    /*TODO if macro name is a reserved name (mov, jmp, etc..) print error */
                     if (searchMacro(MACROS, token))
                     {
-                        printf("error: macro already exist!");
+                        printf("ERROR: macro name \"%s\" already exist!\n", token);
+                        exit(0);
                     }
                     
                     else
@@ -252,13 +256,14 @@ FILE* macroUnfold(FILE* file)
 
 int main(int argc, char* argv[])
 {
-    FILE* file = fopen(argv[1], "r+");
+    char* fname = argv[1];
+    FILE* file = fopen(fname, "r+");
 
     if (file == NULL)
     {
         printf("Failed to open file: %s\n", argv[1]);
     }
 
-    FILE* amOutputFile = macroUnfold(file);
+    FILE* amOutputFile = macroUnfold(file, fname);
     return 1;
 }

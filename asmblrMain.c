@@ -4,19 +4,24 @@
 #include "util.h"
 
 /* beta version for preAsmblr */
- 
+/* get the file name as an argument, no extension is assumed.*/
 int main (int argc, char* argv[])
 {
+    char* fileName;
+    char* fileNameToOpen;
+    const char* as_extension = ".as";
 
 	if (argc < 2)
 	{
 		printf("Usage: %s <filename> <filename> ...\n", argv[0]);
 	}
-	
 	 /* Processing each file name argument */
     for (int i = 1; i < argc; i++) 
     {
-        FILE* file = fopen(argv[i], "r+");
+        fileName = argv[i];
+        fileNameToOpen = argv[i];
+        strcat(fileNameToOpen, as_extension);
+        FILE* file = fopen(fileNameToOpen, "r+");
 
         if (file == NULL) 
         {
@@ -24,7 +29,7 @@ int main (int argc, char* argv[])
             continue; /* Move on to the next file */
         }
 
-        FILE* amOutputFile = mcroUnfold(file);
+        FILE* amOutputFile = macroUnfold(file, fileName);
         /* proccesing file */
         
 		/* for this part we use read row, for each row that is formated - tokenize
