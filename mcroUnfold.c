@@ -9,29 +9,7 @@
 /*TODO: add define with words like mcro,endmcro etc...*/
 
 /* line to ignore gets a full line and check if it is a comment line or an empty line, if it is return true else false. will be transfered to util.c later */
-bool lineToIgnore(char* line)
-{
-    /* ignore comment lines */
-    if (line[0] == ';')
-    {
-        return true;
-    }
 
-    /* ignore empty lines */
-    for (int i = 0; i < strlen(line); i++)
-    {
-        char ch = line[i];
-        if (isspace(ch))
-        {
-            continue;
-        }
-        else
-        {
-            return false;
-        }
-    }
-    return true;
-}
 
 /* first read: counting amount of macros and the length of content.
  * second read: store all the macros and their content.
@@ -43,14 +21,15 @@ FILE* macroUnfold(FILE* file)
     const char delims[4] = " \n\t"; /* to ignore while tokenizing*/
     bool openMacro = false; /* will switch to true when mcro identified, return to false when encounter endmcro */
     bool addMacro = false; /* flag for mcro decleration */
+    bool skip = false; /* for printing loop */
     int counter = 0; /* how many macros will be in the hash table*/
     int macroLength = 0; /* count how many char to allocate for macros content */
-    int nameLength = 0;
+    int temp = 0; /* for counters */
     unsigned long hash = 0; /* for hashing macros */
     macroItem* newMacro = NULL; /* pointer to handle macro items */
     char* token = NULL; /* for all tokenizing proccess */
     FILE* outputFile = fopen("originalName.am", "w"); /*TODO how to import name from input file and create a new file with AM*/
-    char line[ROW_MAX_LENGTH]; /* TODO: add a checker for max 80 excluding \n */
+    char line[ROW_MAX_LENGTH];
     macroTable* MACROS = NULL;
     char* macroContent = NULL;
     char* macroName = NULL;
@@ -73,7 +52,6 @@ FILE* macroUnfold(FILE* file)
         }
         
         lengthTest = NULL;
-        int temp = 0; /* temp counter for macro length */
         token = strtok(line, delims);
         while (token != NULL)
         {
@@ -82,6 +60,7 @@ FILE* macroUnfold(FILE* file)
                 if (temp > macroLength) {
                     macroLength = temp;
                 }
+                temp = 0;
                 openMacro = false;
             }
 
@@ -92,10 +71,6 @@ FILE* macroUnfold(FILE* file)
 
             else if (addMacro)
             {
-                if (strlen(token) > nameLength)
-                {
-                    nameLength = strlen(token);
-                }
                 addMacro = false;
                 openMacro = true;
             }
@@ -114,18 +89,14 @@ FILE* macroUnfold(FILE* file)
     /* if macro found then create a table for macros and unfold (loop 2 and 3) */
     if (counter > 0)
     {
-        printf("counter: %d\n", counter);/*tester remove*/
         MACROS = createMacroTable(counter);
-        printf("created Macro table\n");
-        printf("size: %d\n", MACROS->size);
         macroContent = (char*)malloc(macroLength * sizeof(char)); /* initializng a char array large enough to fit macro content */
         if (macroContent == NULL)
         {
             printf("memory allocation failed\n");
             exit(0);
         }
-        macroName = (char*)malloc(nameLength * sizeof(char));
-
+        
         /* (2) the loop below read the file and insert new macros to the hash table */
         while (fgets(line, ROW_MAX_LENGTH, file) != NULL)
         {
@@ -141,14 +112,11 @@ FILE* macroUnfold(FILE* file)
                 if (strcmp(token, "endmcro") == 0)
                 {
                     hash = macroHash(MACROS->size, macroName, 0);
-                    printf("macroName to be passed: %s\n", macroName);/*tester remove*/
                     newMacro = createMacro(macroName, hash, macroContent);
-                    printf("createad macro succesfully\n");
                     strcpy(newMacro->text, macroContent);
-                    printf("macro content was added: %s\n", newMacro->text);
                     insertMacro(MACROS, newMacro, macroName, hash);
-                    printf("name: %s\n", newMacro->key);/*tester remove*/
                     openMacro = false;
+                    macroName[0] = '\0';
                     macroContent[0] = '\0';
                 }
 
@@ -171,7 +139,6 @@ FILE* macroUnfold(FILE* file)
                     else
                     {
                         macroName = strdup(token);
-                        printf("printing macro name: %s\n", macroName);
                         openMacro = true; /*flag for next iterations to gather macro content*/
                         addMacro = false;
                     }
@@ -191,16 +158,7 @@ FILE* macroUnfold(FILE* file)
                 strcat(macroContent, "\n");
             }
         }
-        printf("pass loop (2)\n\n");/*tester remove*/
-        printf("table size: %d\n", MACROS->size);
-        for (int j = 0; j < MACROS->size; j++)
-        {
-            if (MACROS->items[j] == NULL) {
-                printf("size is %d, %d is empty\n", MACROS->size, j);}
-            printf("%s\n", MACROS->items[j]->text);
-            printf("hash: %lu\n", MACROS->items[j]->hashValue);
-        }
-        /*free(macroContent);*/
+        
         rewind(file);
         /* (3) the loop below re-write the source file with the macros content */
         while (fgets(line, ROW_MAX_LENGTH, file) != NULL)
@@ -209,7 +167,7 @@ FILE* macroUnfold(FILE* file)
             
             if (lineToIgnore(line)) 
             {
-                printf("line ignored good job\n");/*tester remove*/
+                skip = true;
                 continue;
             }
 
@@ -222,6 +180,7 @@ FILE* macroUnfold(FILE* file)
                         openMacro = false;
                     }
                     token = strtok(NULL, delims);
+                    skip = true;
                     continue;
                 }
                 else
@@ -243,19 +202,27 @@ FILE* macroUnfold(FILE* file)
                 {
                     openMacro = true;
                     token = strtok(NULL, delims);
+                    skip = true;
                     continue;
                 }
 
                 /* copy paste text from source file to AM file*/
                 else
                 {
+                    skip = false;
                     fprintf(outputFile, "%s", token);
                     fprintf(outputFile, "%s", " ");
                     token = strtok(NULL, delims);
                 }
             }
-            fprintf(outputFile, "%s", "\n");
+            if (!skip)
+            {
+                fprintf(outputFile, "%s", "\n");
+                skip = false;
+            }
         }
+        freeMacroTable(MACROS);
+        free(macroName);
     } /* end of case macro exist in source file */
     
     /* if no macros - go to loop 3 and make AM file with no comment lines and empty lines */

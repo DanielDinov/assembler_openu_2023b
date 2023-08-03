@@ -8,7 +8,7 @@
 /*hash function for macro table*/
 unsigned long macroHash(int size, char* macroName, unsigned long hash)
 {
-	for (int i = 0; macroName[i] != '\0'; i++) 
+	for (int i = 0; (macroName[i]) != '\0'; i++) 
 	{
 		hash = (hash * 31 + macroName[i]) % size;
 	}
@@ -168,39 +168,4 @@ void insertMacro(macroTable* table, macroItem* newItem, char* key, unsigned long
 		if (table->maxProbs < probsCount)
 			table->maxProbs = probsCount;
 	}
-}
-
-int main()
-{
-	unsigned long newHash1 = macroHash(3, "ELAD", 0);
-	unsigned long newHash2 = macroHash(3, "HANNAH", 0);
-	unsigned long newHash3 = macroHash(3, "PEACHES", 0);
-	/*newHash3 = macroHash(3, "PEACHES", 1);
-	newHash3 = macroHash(3, "PEACHES", 2);*/
-	printf("%lu \n", newHash1);
-	printf("%lu \n", newHash2);
-	printf("%lu \n", newHash3);
-	
-	macroTable* table = createMacroTable(3);
-	macroItem* ELAD = createMacro ("ELAD", newHash1);
-	macroItem* HANNAH = createMacro ("HANNAH", newHash2);
-	macroItem* PEACHES = createMacro ("PEACHES", newHash3);
-	
-	insertMacro(table, ELAD, "ELAD", newHash1);
-	if (searchMacro(table, "ELAD"))
-		printf("found elad\n");
-		
-	insertMacro(table, HANNAH, "HANNAH", newHash2);
-	printf("inserted hannah\n");
-	if (searchMacro(table, "HANNAH"))
-		printf("found HANNAH\n");
-		
-	insertMacro(table, PEACHES, "PEACHES", newHash3);
-	printf("inserted peaches\n");
-	if (searchMacro(table, "PEACHES"))
-		printf("found PEACHES\n");
-	
-	freeMacroTable(table);
-	
-	return 1;
 }

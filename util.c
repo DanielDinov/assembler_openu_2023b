@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
+#include <ctype.h>
 
 /*
  *
@@ -57,13 +59,26 @@ char* binaryToBase64(const char* binary)
     return base64;
 }
 
-unsigned long macroHash(int size, char* name) 
+bool lineToIgnore(char* line)
 {
-    unsigned long hash = 0;
-
-    for (int i = 0; name[i] != '\0'; i++) {
-        hash = (hash * 31 + name[i]) % size;
+    /* ignore comment lines */
+    if (line[0] == ';')
+    {
+        return true;
     }
 
-    return hash;
+    /* ignore empty lines */
+    for (int i = 0; i < strlen(line); i++)
+    {
+        char ch = line[i];
+        if (isspace(ch))
+        {
+            continue;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    return true;
 }

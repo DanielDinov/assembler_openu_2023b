@@ -3,11 +3,9 @@
 
 #include <stdbool.h>
 
-bool read_line(char* line);
 int decimalToBinary(int decimal);
 char* binaryToBase64(const char* binary);
-void mcroUnfold(FILE* file);
-unsigned int mcroHash(int n, const char* name);
+bool lineToIgnore(char* line);
 
 
 #endif /* MY_UTILS_H */
