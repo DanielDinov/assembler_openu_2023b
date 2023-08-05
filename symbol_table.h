@@ -1,38 +1,37 @@
 #ifndef SYMBOL_TABLE_H
 #define SYMBOL_TABLE_H
 
+#include "globals.h"
+
 #define SYMBOL_MAX_NAME_SIZE 31
 
 /* all possible label types */
 enum label_types { DATA=0, STRING, ENTRY, EXTERN};
 
 
-enum symbol_attribute { SYMBOL_DATA=0, SYMBOL_CODE, SYMBOL_ENTRY, SYMBOL_EXTERN};
+typedef enum symbol_attribute_t { SYMBOL_ERROR=-1, SYMBOL_DATA=0, SYMBOL_CODE, SYMBOL_ENTRY, SYMBOL_EXTERN} symbol_attribute;
 
-struct symbol_type {
-    char name[SYMBOL_MAX_NAME_SIZE];
+typedef struct symbol_type_t {
+    char name[SYMBOL_MAX_NAME_SIZE + 1];
     int value;
     symbol_attribute attribute;
-};
+} symbol_type;
 
 typedef struct symbol_data_type {
     symbol_type symbol;
-    symbol_data_type* next;
+    symbol_data* next;
 } symbol_data;
 
-typedef struct symbol_list_type {
-    symbol_data* head;
-} symbol_list;
 
-symbol_list* create_new_symbol_list();
+void create_new_symbol_list();
 
 symbol_data* create_new_symbol_data(char[], int, symbol_attribute);
 
-void add_symbol_to_list(symbol_list*, symbol_data*);
+bool add_symbol_to_list(char[], int, symbol_attribute);
 
 symbol_data* find_symbol(char[]);
 
-int does_symbol_exist(symbol_list*,symbol_data*);
+int does_symbol_exist(symbol_data*);
 
-void free_list(symbol_list*);
+void free_list();
 #endif

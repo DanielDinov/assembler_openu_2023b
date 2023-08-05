@@ -6,6 +6,12 @@
 #include <ctype.h>
 #include <stdlib.h>
 
+/* since a since word is 12 bits this is the max size (2^12-1) to (2^12-1)-1 */
+#define MAX_NUMBER 2047
+#define MIN_NUMBER -2048
+
+#define INITIAL_ADDRESS 100
+
 /* define bool type */
 typedef enum bool_t {
     false = 0,
@@ -64,5 +70,6 @@ typedef struct command_t {
     int num_of_operands;
 } cmd;
 
+extern int current_line;
 
 #endif

@@ -5,4 +5,6 @@
 
 #define CMD_SUM 16
 
+cmd find_cmd(char*);
+
 #endif
