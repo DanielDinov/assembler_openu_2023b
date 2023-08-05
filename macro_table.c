@@ -4,6 +4,7 @@
 #include <string.h>
 
 /*hash table for macros*/
+/*TODO update function names to be suit */
 
 /*hash function for macro table*/
 unsigned long macroHash(int size, char* macroName, unsigned long hash)

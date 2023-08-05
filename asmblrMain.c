@@ -2,14 +2,15 @@
 #include <stdbool.h>
 #include <string.h>
 #include "util.h"
+#include "macroUnfold.h"
 
 /* beta version for preAsmblr */
 /* get the file name as an argument, no extension is assumed.*/
 int main (int argc, char* argv[])
 {
-    char* fileName;
-    char* fileNameToOpen;
-    const char* as_extension = ".as";
+    char* fileName; /* the file name as given as argument */
+    char* fileNameToOpen; /* modified with .as */
+    char* as_extension = ".as";
 
 	if (argc < 2)
 	{
@@ -25,16 +26,12 @@ int main (int argc, char* argv[])
 
         if (file == NULL) 
         {
-            printf("Failed to open file: %s\n", argv[i]);
+            printf("Failed to open file: %s\n", fileName);
             continue; /* Move on to the next file */
         }
 
-        FILE* amOutputFile = macroUnfold(file, fileName);
-        /* proccesing file */
-        
-		/* for this part we use read row, for each row that is formated - tokenize
-			each word that is now only seperated by 1 space. send out each token
-			to 'handle data' function, according to what it returns */
+        FILE* amOutputFile = macroUnfold(file, fileName); /* unfold macros, return new file with .am extension */
+        /* call first and second read on .am file */
         fclose(file);
     }
 
