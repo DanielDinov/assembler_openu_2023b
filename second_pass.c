@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <ctype.h>
 #include "util.h"
-#include <symbol_table.h>
+#include "symbol_table.h"
 
 /* second_pass gets an .am file and access to symbol table to update and finish the code and data images */
 
