@@ -30,6 +30,14 @@ const char* op_code_strings[] =
         "stop"
 };
 
+const char* directives[] =
+{
+    ".date",/*1*/
+    ".string",/*2*/
+    ".entry",/*3*/
+    ".extern"/*4*/
+};
+
 int decimalToBinary(int decimal)
 {
     int binary = 0;
@@ -115,6 +123,18 @@ bool isReservedWord(char* word)
     return false;
 }
 
+int isDirective(char* word)
+{
+    for (int i = 0; i < sizeof(directives) / sizeof(directives[0]); i++)
+    {
+        if (strcmp(word, directives[i]) == 0)
+        {
+            return i+1;
+        }
+    }
+    return 0;
+}
+
 char* str_allocate_cat(char* first_str, char* second_str) 
 {
     char* str = (char*)malloc(strlen(first_str) + strlen(second_str) + 1);
@@ -122,3 +142,5 @@ char* str_allocate_cat(char* first_str, char* second_str)
     strcat(str, second_str);
     return str;
 }
+
+const char delims[4] = " \n\t"; /* to ignore while tokenizing*/

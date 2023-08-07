@@ -3,36 +3,31 @@
 #include <string.h>
 #include <stdbool.h>
 #include <ctype.h>
+#include <globals.h>
 #include "util.h"
 #include "macro_table.h"
-#define ROW_MAX_LENGTH 82
 
 /* TODO fix issue where empty line appears above unfolded macros - maybe print RAW file and then eliminate 
    is it coming from the macroContent itself or printing commands?*/
+/* TODO line counter for error prints */
+/* calling macro can only come after defining it (page 38 pdf) */
 
 /* first read: counting amount of macros and the length of content.
  * second read: store all the macros and their content.
- * third read: write the new output file with unfolded macros.
- */
+ * third read: write the new output file with unfolded macros. */
 
 FILE* macroUnfold(FILE* file, char* fileName)
 {
-    const char delims[4] = " \n\t"; /* to ignore while tokenizing*/
     char* am_extension = ".am";
-    bool openMacro = false; /* will switch to true when mcro identified, return to false when encounter endmcro */
-    bool addMacro = false; /* flag for mcro decleration */
+    bool openMacro = false, addMacro = false; /* flags for macro handling */
     bool skip = false; /* for printing loop */
-    int counter = 0; /* how many macros will be in the hash table*/
-    int macroLength = 0; /* count how many char to allocate for macros content */
-    int temp = 0; /* for counters */
+    int counter = 0, macroLength = 0, temp = 0;  /* counters for macro amount and length */
     unsigned long hash = 0; /* for hashing macros */
     macroTable* MACROS = NULL;
     macroItem* newMacro = NULL; /* pointer to handle macro items */
-    char* token = NULL; /* for all tokenizing proccess */
-    char line[ROW_MAX_LENGTH];
-    char* macroContent = NULL;
-    char* macroName = NULL;
-    char* outputFileName = str_allocate_cat(fileName, am_extension);
+    char* token = NULL, macroContent = NULL, macroName = NULL;
+    char line[MAX_LINE_LEN+2];
+    char* outputFileName = str_allocate_cat(fileName, am_extension); /* file name argument comes with no proper extension, fix it before open file */
 
     printf("%s\n", outputFileName);
     FILE* outputFile = fopen(outputFileName, "w");
@@ -42,7 +37,7 @@ FILE* macroUnfold(FILE* file, char* fileName)
     }
 
     /* (1) the loop below counts the amount of macros in the file to initialize and efficient table */
-    while (fgets(line, ROW_MAX_LENGTH, file) != NULL)
+    while (fgets(line, MAX_LINE_LEN+2, file) != NULL)
     {
         /* ignore comment and empty lines */
         if (lineToIgnore(line)) 
@@ -110,7 +105,7 @@ FILE* macroUnfold(FILE* file, char* fileName)
         }
     }
     /* (2) the loop below read the file and insert new macros to the hash table */
-    while (fgets(line, ROW_MAX_LENGTH, file) != NULL)
+    while (fgets(line, MAX_LINE_LEN+2, file) != NULL)
     {
         if (lineToIgnore(line))
         {
@@ -173,7 +168,7 @@ FILE* macroUnfold(FILE* file, char* fileName)
         
     rewind(file);
     /* (3) the loop below re-write the source file with the macros content */
-    while (fgets(line, ROW_MAX_LENGTH, file) != NULL)
+    while (fgets(line, MAX_LINE_LEN+2, file) != NULL)
     {
         token = strtok(line, delims);
             
