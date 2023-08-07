@@ -10,7 +10,6 @@ bool first_pass(char* file_name){
     bool sucess_flag = true, has_label;
     FILE* working_file;
     char symbol_name[SYMBOL_MAX_NAME_SIZE+1];
-    symbol_data symbol;
 
     if ((working_file = fopen(file_name, "r")) == NULL){
         printf("Failed to open file %s",file_name);

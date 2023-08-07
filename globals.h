@@ -10,6 +10,9 @@
 #define MAX_NUMBER 2047
 #define MIN_NUMBER -2048
 
+#define MAX_LINE_LEN 80
+#define MAX_DATA_SIZE 1024
+
 #define INITIAL_ADDRESS 100
 
 /* define bool type */
@@ -48,19 +51,19 @@ typedef enum are_t {
 } encoding_type;
 
 /* define addressing type enum */
-typedef enum adressing_t {
+typedef enum addressing_t {
     adders_error = -1,
     immediate = 1,
     direct = 3,
-    register = 5
-} adressing_type;
+    register_addr = 5
+} addressing_type;
 
 /* machine word struct with all required parameters */
 typedef struct macine_word_t {
     encoding_type encoding;
-    adressing_type dest;
+    addressing_type dest;
     op_code_type op_code;
-    adressing_type source;
+    addressing_type source;
 } machine_word;
 
 /* command types, to initialize command array in order to retrive data */

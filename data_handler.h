@@ -3,9 +3,6 @@
 
 #include "globals.h"
 
-#define MAX_LINE_LEN 80
-#define MAX_DATA_SIZE 1024
-
 /* adds number to data_img and return true/false according to sucess */
 bool add_data_num(char*,int);
 
