@@ -1,9 +1,9 @@
 #include "commands.h"
 #include "data_handler.h"
-#include  "symbol_table.h"
+#include "symbol_table.h"
+#include "util.h"
 
 bool first_pass(char* file_name){
-    /* TODO: handle starting line at 100 */
     int ic = 0,dc = 0, current_line = 0,dc_incerement;
     char line[MAX_LINE_LEN + 1] = "", tmp_line_for_display[MAX_LINE_LEN + 1];
     char* token;
@@ -16,14 +16,14 @@ bool first_pass(char* file_name){
         return false; /* nothing to continue with */
     }
     while (fgets(line, MAX_LINE_LEN+1, working_file) != NULL){
-        /* TODO: reset variables */
+        ///* TODO: reset variables */
 
         has_label = false;
         strcpy(tmp_line_for_display,line);
         
         current_line++;
-        /* TODO: handle formatting of line */
         format_line(line);
+
         if (line[0] == ';' | is_line_empty(line))
             continue;
         
@@ -39,10 +39,17 @@ bool first_pass(char* file_name){
                 fprintf("Line %d label cannot start with number",current_line);
                 sucess_flag = false;
             }
-            /* TODO: check for saves words */
 
-            strncpy(symbol_name, token, SYMBOL_MAX_NAME_SIZE+1);
+            /* copying token into variable for each of access later on */
+            strncpy(symbol_name, token, strlen(token) -1);
+            symbol_name[strlen(token) -1] = '\0'; /* adding null terminator to signify end of string */
             has_label = true;
+
+            /* checking for reserved word and empty declarations */
+            if (isReservedWord(symbol_name)){
+                fprintf("Line %d label cannot be a reserved word",current_line);
+                sucess_flag = false;
+            }
             if ((token = strtok(NULL, " ")) == NULL){
                 fprintf("Line %d cannot have empty label declaration",current_line);
                 sucess_flag = false;
@@ -107,7 +114,7 @@ bool first_pass(char* file_name){
         }
         /* if here meaning command type line */
         else {
-            /* TODO: handle command type line */
+            ///* TODO: handle command type line */
         }
 
     }

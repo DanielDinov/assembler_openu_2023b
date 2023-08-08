@@ -64,8 +64,20 @@ bool add_extra_word_single_param(char* name, addressing_type address, bool is_so
         new_num<<=2; /* make room for 00 */
         CODE_IMG[word_location] = new_num;
     } else if (address == direct) {
-        /* TODO: add direct address logic */
-        /* TODO: need to handle in second pass */
+        ///* TODO: need to handle in second pass */
+        if((symbol = find_symbol(name)) == NULL){
+            fprintf(stderr, "Line %d unable to find label %s",current_line,name);
+            return false;
+        }
+        new_num = symbol->symbol.value;
+        if (symbol->symbol.attribute == SYMBOL_EXTERN){
+            new_num<<2 + external; /* if external then add const for 01 bits in 1-0 location */
+            ///* TODO: complete write_external_file function */
+            write_external_file(symbol->symbol.name, word_location);
+        } else {
+            /* if not external then label needs reloaction so add the const for 10 bits in 1-0 location */
+            new_num<<2 + realocatable;
+        }
     }
     return true;
 }

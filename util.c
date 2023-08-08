@@ -3,14 +3,14 @@
 #include <string.h>
 #include <stdbool.h>
 #include <ctype.h>
-
+#include <util.h>
 /*
  *
  */
 
 const char base64Lookup[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-const char* op_code_strings[] = 
+const char* saved_word_strings[] = 
 {
         "mov",
         "cmp",
@@ -27,7 +27,19 @@ const char* op_code_strings[] =
         "prn",
         "jsr",
         "rts",
-        "stop"
+        "stop",
+        ".data",
+        ".string",
+        ".entry",
+        ".extern",
+        "r0",
+        "r1",
+        "r2",
+        "r3",
+        "r4",
+        "r5",
+        "r6",
+        "r7"
 };
 
 const char* directives[] =
@@ -113,9 +125,9 @@ bool lineToIgnore(char* line)
 
 bool isReservedWord(char* word)
 {
-    for (int i = 0; i < sizeof(op_code_strings) / sizeof(op_code_strings[0]); i++)
+    for (int i = 0; i < sizeof(saved_word_strings) / sizeof(saved_word_strings[0]); i++)
     {
-        if (strcmp(word, op_code_strings[i]) == 0)
+        if (strcmp(word, saved_word_strings[i]) == 0)
         {
             return true;
         }
@@ -141,6 +153,31 @@ char* str_allocate_cat(char* first_str, char* second_str)
     strcpy(str, first_str);
     strcat(str, second_str);
     return str;
+}
+
+void format_line(char* word){
+    int i, buffer_index=0, in_word=0;
+    char line[MAX_LINE_LEN];
+    for (i=0; i<strlen(word); i++){
+        if (word[i] == ' ' || word[i] == '\t'){
+            if (in_word){
+                line[buffer_index++] = ' ';
+                in_word = 0;
+            }
+            continue;
+        }
+        /* space the built string correctly */
+        if (word[i] == ','){
+            line[buffer_index++] = ' ';
+            line[buffer_index++] = ',';
+            continue;
+        }
+        line[buffer_index++] = word[i];
+        in_word = 1;
+    }
+    /* end string with null terminator */
+    line[buffer_index] = '\0';
+    strcpy(word,line)
 }
 
 const char delims[4] = " \n\t"; /* to ignore while tokenizing*/
