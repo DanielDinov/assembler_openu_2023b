@@ -7,9 +7,6 @@
 #include "macro_table.h"
 #define MAX_LINE_LEN 80 /*todo add to globals*/
 
-/* TODO shrink code size, its massive, can do in 2 loops, dynmacly control the length of macro content */
-/* calling macro can only come after defining it (page 38 pdf) */
-
 /* first read: counting amount of macros and the length of content.
  * second read: store all the macros and their content.
  * third read: write the new output file with unfolded macros. */
@@ -19,7 +16,7 @@ FILE* macroUnfold(FILE* file, char* fileName)
     char* am_extension = ".am";/*todo add to globals*/
     bool openMacro = false, addMacro = false; /* flags for macro handling */
     bool skip = false; /* for printing loop */
-    int counter = 0, macroLength = 0, nameLength = 0, temp = 0, currentLine = 1;  /* counters for macro amount and length */
+    int counter = 0, macroLength = 0, nameLength = 0, currentLine = 1;  /* counters for macro amount and length */
     macroTable* MACROS = NULL;
     macroItem* newMacro = NULL; /* pointer to handle macro items */
     char *token = NULL, *macroContent = NULL, *macroName = NULL;
@@ -53,35 +50,19 @@ FILE* macroUnfold(FILE* file, char* fileName)
         token = strtok(line, delims);
         while (token != NULL)
         {
-            if (strcmp(token, "endmcro") == 0)
-            {
-                if (temp > macroLength) {
-                    macroLength = temp;
-                }
-                temp = 0;
-                openMacro = false;
-            }
-
-            else if (openMacro)
-            {
-                temp = temp + strlen(token) + 2; /*2 for space, \n etc.*/
-            }
-
-            else if (addMacro)
+            if (addMacro)
             {
                 if (isReservedWord(token))
                 {
                     printf("ERROR:at line %d Macro name is illegal (%s is a reserved word)\n", currentLine, token);
                     exit(0);
                 }
+                counter++;
                 addMacro = false;
-                openMacro = true;
             }
-
             else if (strcmp(token, "mcro") == 0)
             {
                 addMacro = true;
-                counter++;
             }
 
             token = strtok(NULL, delims);
@@ -119,11 +100,13 @@ FILE* macroUnfold(FILE* file, char* fileName)
                 macroName = NULL;
                 free(macroContent);
                 macroContent = NULL;
+                macroLength = 0;
             }
 
             /* openMacro: add new words to content buffer*/
             if (openMacro && counter > 0)
             {
+                macroLength = macroLength + strlen(token) + 2;
                 if (macroContent == NULL) /* condtion for new macro content */
                 {
                     macroContent = (char*)malloc(macroLength * sizeof(char));
@@ -137,6 +120,12 @@ FILE* macroUnfold(FILE* file, char* fileName)
                 }
                 else /* add to an existing macro content */
                 {
+                    macroContent = realloc(macroContent, macroLength * sizeof(char));
+                    if (macroContent == NULL)
+                    {
+                        printf("macroContent memory allocation failed\n");
+                        exit(0);
+                    }
                     strcat(macroContent, token);
                     strcat(macroContent, " ");
                 }
