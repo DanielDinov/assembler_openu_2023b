@@ -24,7 +24,7 @@ typedef struct HashTable
 } macroTable;
 
 /* Creates a macro item */
-macroItem* createMacro(const char* key, unsigned long value, const char* text);
+macroItem* createMacro(const char* key, const char* text);
 
 /* Creates a macro table */
 macroTable* createMacroTable(int size);
@@ -42,6 +42,6 @@ bool searchMacro(macroTable* table, char* macroName);
 macroItem* getMacro(macroTable* table, char* macroName);
 
 /* Inserts an item into the table */
-void insertMacro(macroTable* table, macroItem* newItem, char* key, unsigned long value);
+void insertMacro(macroTable* table, macroItem* newItem);
 
 #endif /* MACRO_TABLE_H */

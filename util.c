@@ -3,14 +3,14 @@
 #include <string.h>
 #include <stdbool.h>
 #include <ctype.h>
-#include <util.h>
+
 /*
  *
  */
 
 const char base64Lookup[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-const char* saved_word_strings[] = 
+const char* op_code_strings[] = 
 {
         "mov",
         "cmp",
@@ -27,19 +27,7 @@ const char* saved_word_strings[] =
         "prn",
         "jsr",
         "rts",
-        "stop",
-        ".data",
-        ".string",
-        ".entry",
-        ".extern",
-        "r0",
-        "r1",
-        "r2",
-        "r3",
-        "r4",
-        "r5",
-        "r6",
-        "r7"
+        "stop"
 };
 
 const char* directives[] =
@@ -48,18 +36,6 @@ const char* directives[] =
     ".string",/*2*/
     ".entry",/*3*/
     ".extern"/*4*/
-};
-
-const char* registers[] =
-{
-    "@r0",
-    "@r1",
-    "@r2",
-    "@r3",
-    "@r4",
-    "@r5",
-    "@r6",
-    "@r7"
 };
 
 int decimalToBinary(int decimal)
@@ -137,9 +113,9 @@ bool lineToIgnore(char* line)
 
 bool isReservedWord(char* word)
 {
-    for (int i = 0; i < sizeof(saved_word_strings) / sizeof(saved_word_strings[0]); i++)
+    for (int i = 0; i < sizeof(op_code_strings) / sizeof(op_code_strings[0]); i++)
     {
-        if (strcmp(word, saved_word_strings[i]) == 0)
+        if (strcmp(word, op_code_strings[i]) == 0)
         {
             return true;
         }
@@ -159,51 +135,17 @@ int isDirective(char* word)
     return 0;
 }
 
-bool is_register(char* word){
-    int i;
-    for (int i = 0; i < sizeof(registers) / sizeof(registers[0]); i++){
-        if (strcmp(word,registers[i]) == 0)
-            return true;
-    }
-    return false;
-}
-
 char* str_allocate_cat(char* first_str, char* second_str) 
 {
     char* str = (char*)malloc(strlen(first_str) + strlen(second_str) + 1);
     if (str == NULL)
     {
-        printf("memory allocation failed\n");
+        printf("Memory allocation failed\n");
         exit(0);
     }
     strcpy(str, first_str);
     strcat(str, second_str);
     return str;
-}
-
-void format_line(char* word){
-    int i, buffer_index=0, in_word=0;
-    char line[MAX_LINE_LEN];
-    for (i=0; i<strlen(word); i++){
-        if (word[i] == ' ' || word[i] == '\t'){
-            if (in_word){
-                line[buffer_index++] = ' ';
-                in_word = 0;
-            }
-            continue;
-        }
-        /* space the built string correctly */
-        if (word[i] == ','){
-            line[buffer_index++] = ' ';
-            line[buffer_index++] = ',';
-            continue;
-        }
-        line[buffer_index++] = word[i];
-        in_word = 1;
-    }
-    /* end string with null terminator */
-    line[buffer_index] = '\0';
-    strcpy(word,line)
 }
 
 const char delims[4] = " \n\t"; /* to ignore while tokenizing*/

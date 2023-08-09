@@ -35,7 +35,7 @@ typedef struct HashTable
 } macroTable;
 
 /*create macro item*/
-macroItem* createMacro(const char* key, unsigned long value, const char* text)
+macroItem* createMacro(const char* key, const char* text)
 {
 	macroItem* item = (macroItem*)malloc(sizeof(macroItem));
 	if (item == NULL)
@@ -49,7 +49,7 @@ macroItem* createMacro(const char* key, unsigned long value, const char* text)
 		printf("Memory allocation failed for new macro key. \n");
 		exit(0);
 	}
-	item->hashValue = value;
+	item->hashValue = 0;
 	item->text = (char*)malloc(strlen(text) + 1);
 	if (item->text == NULL)
 	{
@@ -152,22 +152,23 @@ macroItem* getMacro(macroTable* table, char* macroName)
 }
 
 /*insert item to the table*/
-void insertMacro(macroTable* table, macroItem* newItem, char* key, unsigned long value)
+void insertMacro(macroTable* table, macroItem* newItem)
 {
-	if (!searchMacro(table, key))
+	if (!searchMacro(table, newItem->key))
 	{
-		macroItem* ptr = table->items[value];
+		unsigned long index = macroHash(table->size, newItem->key, newItem->hashValue);
+		macroItem* ptr = table->items[index];
 		int probsCount = 1;
 
 		while (ptr != NULL)
 		{
-			value = macroHash(table->size, key, value); /*re-hash*/
-			ptr = table->items[value];
+			index = macroHash(table->size, newItem->key, index); /*re-hash*/
+			ptr = table->items[index];
 			probsCount++;
 		}
 
-		newItem->hashValue = value;
-		table->items[value] = newItem;
+		newItem->hashValue = index;
+		table->items[index] = newItem;
 		if (table->maxProbs < probsCount)
 			table->maxProbs = probsCount;
 	}
