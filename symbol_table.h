@@ -3,7 +3,6 @@
 
 #include "globals.h"
 
-#define SYMBOL_MAX_NAME_SIZE 31
 
 /* all possible label types */
 enum label_types { DATA=0, STRING, ENTRY, EXTERN};

@@ -10,6 +10,7 @@
 #define MAX_NUMBER 2047
 #define MIN_NUMBER -2048
 
+#define SYMBOL_MAX_NAME_SIZE 31
 #define MAX_LINE_LEN 80
 #define MAX_DATA_SIZE 1024
 
@@ -53,6 +54,7 @@ typedef enum are_t {
 /* define addressing type enum */
 typedef enum addressing_t {
     adders_error = -1,
+    no_addresing = 0,
     immediate = 1,
     direct = 3,
     register_addr = 5
@@ -72,6 +74,11 @@ typedef struct command_t {
     op_code_type op_code;
     int num_of_operands;
 } cmd;
+
+typedef struct parameter_t {
+    char param_name[SYMBOL_MAX_NAME_SIZE + 1];
+    addressing_type address;
+} parameter;
 
 extern int current_line;
 

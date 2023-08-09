@@ -10,6 +10,9 @@ bool first_pass(char* file_name){
     bool sucess_flag = true, has_label;
     FILE* working_file;
     char symbol_name[SYMBOL_MAX_NAME_SIZE+1];
+    parameter first_param, second_param;
+    cmd current_cmd;
+    machine_word current_machine_word;
 
     if ((working_file = fopen(file_name, "r")) == NULL){
         printf("Failed to open file %s",file_name);
@@ -24,7 +27,7 @@ bool first_pass(char* file_name){
         current_line++;
         format_line(line);
 
-        if (line[0] == ';' | is_line_empty(line))
+        if (line[0] == ';' | is_line_empty(line)) ///* TODO: create function for is_line_empty */
             continue;
         
         if ((token = strtok(line, " ")) == NULL){
@@ -115,7 +118,74 @@ bool first_pass(char* file_name){
         /* if here meaning command type line */
         else {
             ///* TODO: handle command type line */
+            if (has_label){
+                if (!add_symbol_to_list(symbol_name,dc,SYMBOL_DATA))
+                    sucess_flag = false;
+            }
+            if((current_cmd = find_cmd(token)) == NULL){
+                fprintf("Line %d bad command,unable to process %d",current_line,token);
+                sucess_flag = false;
+                return false; /* return to avoid NULL access violation */
+            }
+            find_parameters(first_param, second_param);
+
+            current_machine_word.op_code = current_cmd.op_code;
+            current_machine_word.source = first_param.address;
+            current_machine_word.dest = second_param.address;
+
+            add_machine_word(current_machine_word,ic);
+            ic++;
+
+            switch (current_cmd.num_of_operands){
+            case 0:
+                if (first_param.address != no_addresing){
+                    fprintf("Line %d cmd %s shouldnt receive parameters",current_line,current_cmd.command_name);
+                    sucess_flag = false;
+                }
+                break;
+            
+            case 1:
+                if (first_param.address == no_addresing || second_param != no_addresing){
+                    fprintf("Line %d cmd %s should receive 1 parameter",current_line,current_cmd.command_name);
+                    sucess_flag = false;
+                }
+                /* direct addressing will be handled in second pass since not enough data currently */
+                if (first_param.address == register_addr || first_param.address == immediate)
+                    if (!add_extra_word_single_param(first_param,false,ic))
+                        sucess_flag = false;
+                ic++
+                break;
+            
+            case 2:
+                if (first_param.address == no_addresing || second_param == no_addresing){
+                    fprintf("Line %d cmd %s should receive 2 parameter",current_line,current_cmd.command_name);
+                    sucess_flag = false;
+                }
+                /* when both addressing types are register they share a single word */
+                if (first_param.address == register_addr && second_param.address == register_addr){
+                    add_extra_word_double_param(first_param.param_name, second_param.param_name, ic);
+                    ic++;
+                } else { /* meaning 1 of the addressing type is not register addressing */
+                    if (first_param.address != adders_error && second_param.address != adders_error){
+                        if (first_param.address == register_addr || first_param.address == immediate)
+                            if (!add_extra_word_single_param(first_param,true,ic))
+                                sucess_flag = false;
+                        ic++;
+                        if (second_param.address == register_addr || second_param.address == immediate)
+                            if (!add_extra_word_single_param(second_param,false,ic))
+                                sucess_flag = false;
+                        ic++;
+                    }
+                }
+                break;
+            
+            default:
+                fprintf("Line %d bad command,unable to process %d",current_line,token);
+                sucess_flag = false;
+                break;
+            }
         }
 
     }
+    return sucess_flag;
 }

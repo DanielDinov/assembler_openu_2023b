@@ -50,6 +50,18 @@ const char* directives[] =
     ".extern"/*4*/
 };
 
+const char* registers[] =
+{
+    "@r0",
+    "@r1",
+    "@r2",
+    "@r3",
+    "@r4",
+    "@r5",
+    "@r6",
+    "@r7"
+};
+
 int decimalToBinary(int decimal)
 {
     int binary = 0;
@@ -145,6 +157,15 @@ int isDirective(char* word)
         }
     }
     return 0;
+}
+
+bool is_register(char* word){
+    int i;
+    for (int i = 0; i < sizeof(registers) / sizeof(registers[0]); i++){
+        if (strcmp(word,registers[i]) == 0)
+            return true;
+    }
+    return false;
 }
 
 char* str_allocate_cat(char* first_str, char* second_str) 
