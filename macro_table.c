@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include "util.h"
 
 /*hash table for macros*/
 /*TODO update function names to be suit */
@@ -9,7 +10,7 @@
 /*hash function for macro table*/
 unsigned long macroHash(int size, char* macroName, unsigned long hash)
 {
-	for (int i = 0; (macroName[i]) != '\0'; i++) 
+	for (int i = 0; (macroName[i]) != '\0'; i++)
 	{
 		hash = (hash * 31 + macroName[i]) % size;
 	}
@@ -42,14 +43,14 @@ macroItem* createMacro(const char* key, unsigned long value, const char* text)
 		printf("Memory allocation failed for new macro. \n");
 		exit(0);
 	}
-	item->key = (char*) malloc(strlen(key) + 1);
+	item->key = (char*)malloc(strlen(key) + 1);
 	if (item->key == NULL)
 	{
 		printf("Memory allocation failed for new macro key. \n");
 		exit(0);
 	}
 	item->hashValue = value;
-	item->text = (char*) malloc(strlen(text) + 1);
+	item->text = (char*)malloc(strlen(text) + 1);
 	if (item->text == NULL)
 	{
 		printf("Memory allocation failed for new macro text. \n");
@@ -71,7 +72,8 @@ macroTable* createMacroTable(int size)
 	}
 	table->size = size;
 	table->count = 0;
-	table->items = (macroItem**)calloc(table->size, sizeof(macroItem*));
+	table->maxProbs = 1;
+	table->items = (macroItem**)malloc(table->size * sizeof(macroItem*));
 	if (table->items == NULL)
 	{
 		printf("Memory allocation failed for new macro table. \n");
@@ -159,7 +161,7 @@ void insertMacro(macroTable* table, macroItem* newItem, char* key, unsigned long
 
 		while (ptr != NULL)
 		{
-			value =	macroHash(table->size, key, value); /*re-hash*/
+			value = macroHash(table->size, key, value); /*re-hash*/
 			ptr = table->items[value];
 			probsCount++;
 		}
