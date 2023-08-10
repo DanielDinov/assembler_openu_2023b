@@ -27,7 +27,7 @@ bool first_pass(char* file_name){
         current_line++;
         format_line(line);
 
-        if (line[0] == ';' | is_line_empty(line)) ///* TODO: create function for is_line_empty */
+        if (line[0] == ';' | lineToIgnore(line))
             continue;
         
         if ((token = strtok(line, " ")) == NULL){
