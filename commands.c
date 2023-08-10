@@ -115,7 +115,7 @@ void find_parameters(parameter first_param, parameter second_param){
         /* only labels start with char */
         if (isalpha(token[0])){
             if (isReservedWord(token)){
-                fprintf("Line %d label reference cannot be a reserved word",current_line);
+                fprintf(stderr, "Line %d label reference cannot be a reserved word",current_line);
                 return;
             }
             first_param.address = direct;
@@ -143,7 +143,7 @@ void find_parameters(parameter first_param, parameter second_param){
         return;
     }
     if (!has_comma){
-        fprintf("Line %d missing comma after first parameter",current_line);
+        fprintf(stderr, "Line %d missing comma after first parameter",current_line);
         return;
     }
     strcpy(second_param.param_name, token);
@@ -153,7 +153,7 @@ void find_parameters(parameter first_param, parameter second_param){
         /* only labels start with char */
         if (isalpha(token[0])){
             if (isReservedWord(token)){
-                fprintf("Line %d label reference cannot be a reserved word",current_line);
+                fprintf(stderr, "Line %d label reference cannot be a reserved word",current_line);
                 return;
             }
             second_param.address = direct;
@@ -172,6 +172,6 @@ void find_parameters(parameter first_param, parameter second_param){
     }
     /* check for extreneous text after second parameter */
     if((token = strtok(NULL, " ")) != NULL){
-        fprintf("Line %d extreneous text after second parameter",current_line);
+        fprintf(stderr,"Line %d extreneous text after second parameter",current_line);
     }
 }
