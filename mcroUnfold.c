@@ -7,15 +7,14 @@
 #include "macro_table.h"
 #define MAX_LINE_LEN 80 /*todo add to globals*/
 
-/* first read: counting amount of macros and the length of content.
- * second read: store all the macros and their content.
- * third read: write the new output file with unfolded macros. */
+/* first read: count how many macros to initialize an efficient table, check rows don't excced 80 chars, and macro names are legal
+   second read: copy content to .am file, insert and unfold macros, get rid of comment and empty lines*/
 
 FILE* macroUnfold(FILE* file, char* fileName)
 {
     char* am_extension = ".am";/*todo add to globals*/
     bool openMacro = false, addMacro = false; /* flags for macro handling */
-    bool skip = false; /* for printing loop */
+    bool skip = true; /* for printing loop */
     int counter = 0, macroLength = 0, nameLength = 0, currentLine = 1;  /* counters for macro amount and length */
     macroTable* MACROS = NULL;
     macroItem* newMacro = NULL; /* pointer to handle macro items */
@@ -83,12 +82,20 @@ FILE* macroUnfold(FILE* file, char* fileName)
         if (lineToIgnore(line))
         {
             currentLine++;
+            skip = true;
             continue;
         }
 
         token = strtok(line, delims);
         while (token != NULL)
         {
+            if (counter > 0 && (newMacro = getMacro(MACROS, token)) != NULL)
+            {
+                fprintf(outputFile, "%s", newMacro->text);
+                skip = false;
+                token = strtok(NULL, delims);
+            }
+            else
             /* endmcro: submit the contnet in and reset the string*/
             if ((strcmp(token, "endmcro") == 0) && counter > 0)
             {
@@ -100,9 +107,12 @@ FILE* macroUnfold(FILE* file, char* fileName)
                 macroName = NULL;
                 free(macroContent);
                 macroContent = NULL;
+                newMacro = NULL;
                 macroLength = 0;
+                skip = true;
+                token = strtok(NULL, delims);
             }
-
+            else
             /* openMacro: add new words to content buffer*/
             if (openMacro && counter > 0)
             {
@@ -117,6 +127,8 @@ FILE* macroUnfold(FILE* file, char* fileName)
                     }
                     strcpy(macroContent, token);
                     strcat(macroContent, " ");
+                    skip = true;
+                    token = strtok(NULL, delims);
                 }
                 else /* add to an existing macro content */
                 {
@@ -128,8 +140,11 @@ FILE* macroUnfold(FILE* file, char* fileName)
                     }
                     strcat(macroContent, token);
                     strcat(macroContent, " ");
+                    skip = true;
+                    token = strtok(NULL, delims);
                 }
             }
+            else
             /* encounterd 'mcro' last iteration: look up in the table, if exist - error, else insert */
             if (addMacro && counter > 0)
             {
@@ -145,90 +160,37 @@ FILE* macroUnfold(FILE* file, char* fileName)
                     strcpy(macroName, token);
                     openMacro = true; /*flag for next iterations to gather macro content*/
                     addMacro = false;
+                    skip = true;
+                    token = strtok(NULL, delims);
                 }
             }
-
+            else
             /* mcro declared, flag up for next iteration to consume it*/
             if ((strcmp(token, "mcro") == 0) && counter > 0)
             {
                 addMacro = true;
+                skip = true;
+                token = strtok(NULL, delims);
             }
-
-            token = strtok(NULL, delims);
+            /* no macro handling - copy paste to new file */
+            else
+            {
+                fprintf(outputFile, "%s%s", token, " ");
+                skip = false;
+                token = strtok(NULL, delims);
+            }
         }
 
+        currentLine++;
         if (openMacro && counter > 0 && macroContent != NULL)
         {
                 strcat(macroContent, "\n");
         }
-
-        currentLine++;
-    }
-    rewind(file);
-    currentLine = 1;
-
-    /* (3) the loop below re-write the source file with the macros content */
-    while (fgets(line, MAX_LINE_LEN + 2, file) != NULL)
-    {
-        if (lineToIgnore(line))
-        {
-            currentLine++;
-            skip = true;
-            token = strtok(NULL, delims);
-            continue;
-        }
-
-        token = strtok(line, delims);
-        while (token != NULL)
-        {
-            if (openMacro && counter > 0)
-            {
-                if (strcmp(token, "endmcro") == 0)
-                {
-                    openMacro = false;
-                }
-                token = strtok(NULL, delims);
-                skip = true;
-                continue;
-            }
-            else
-            /*unfold existing macro*/
-            if (counter > 0)
-            {
-                newMacro = getMacro(MACROS, token);
-            }
-            if (newMacro != NULL)
-            {
-                fprintf(outputFile, "%s", newMacro->text);
-                newMacro = NULL;
-                token = strtok(NULL, delims);
-                continue;
-            }
-            /* skipping mcro flags*/
-            else if ((strcmp(token, "mcro") == 0) && counter > 0)
-            {
-                openMacro = true;
-                token = strtok(NULL, delims);
-                skip = true;
-                continue;
-            }
-            /* copy paste text from source file to AM file*/
-            else
-            {
-                skip = false;
-                fprintf(outputFile, "%s", token);
-                fprintf(outputFile, "%s", " ");
-                token = strtok(NULL, delims);
-            }
-        }
-
-        if (!skip)
+        else
+        if(!skip)
         {
             fprintf(outputFile, "%s", "\n");
-            skip = false;
         }
-
-        currentLine++;
     }
 
     if (counter > 0)
@@ -272,5 +234,4 @@ int main(int argc, char* argv[])
     }
 
     return 0;
-
 }
