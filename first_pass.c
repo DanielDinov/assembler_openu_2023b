@@ -99,7 +99,7 @@ bool first_pass(char* file_name){
                     fprintf("Line %d no parameters after .extern line",current_line);
                     sucess_flag = false;
                 }
-                if (!add_symbol_to_list(token,dc,SYMBOL_DATA))
+                if (!add_symbol_to_list(token,dc,SYMBOL_EXTERN))
                     sucess_flag = false;
             } else if (strcmp(token, ".extry") == 0){
                 /* here so it wont fall in the next else cluase but will be handled in 2nd pass */
