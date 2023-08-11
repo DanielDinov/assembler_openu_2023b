@@ -1,20 +1,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
 #include <ctype.h>
-#include "util.h"
+#include "commands.h"
+#include "data_handler.h"
 #include "symbol_table.h"
+#include "util.h"
 
 /* second_pass gets an .am file and access to symbol table to update and finish the code and data images */
 
-FILE* secondPass(FILE* file, char* fileName)
+bool secondPass(FILE* file, char* fileName)
 {
-	char line[ROW_MAX_LENGTH];
+	char line[MAX_LINE_LEN + 2];
 	char* token = NULL;
 	int IC = 0;
 
-	while (fgets(line, ROW_MAX_LENGTH, file) != NULL)
+	while (fgets(line, MAX_LINE_LEN + 2, file) != NULL)
 	{
 		token = strtok(line, delims);
 		while (token != NULL)

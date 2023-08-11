@@ -82,4 +82,7 @@ typedef struct parameter_t {
 
 extern int current_line;
 
+char* am_extension = ".am";
+char* as_extension = ".as";
+
 #endif

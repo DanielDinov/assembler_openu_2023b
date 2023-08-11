@@ -2,7 +2,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include "util.h"
-#include "macroUnfold.h"
+#include "macro_unfold.h"
 
 /* beta version for preAsmblr */
 /* get the file name as an argument, no extension is assumed.*/
@@ -10,7 +10,6 @@ int main (int argc, char* argv[])
 {
     char* fileName; /* the file name as given as argument */
     char* fileNameToOpen; /* modified with .as */
-    char* as_extension = ".as";
 
 	if (argc < 2)
 	{
