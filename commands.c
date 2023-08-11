@@ -2,6 +2,7 @@
 #include "symbol_table.h"
 #include "util.h"
 
+/*TODO out of array boundries check (over 1024)*/
 int CODE_IMG[MAX_DATA_SIZE];
 
 cmd cmd_table[CMD_SUM] = {
@@ -39,6 +40,12 @@ void add_machine_word(machine_word current_word, int IC){
     built_word <<= 3 + current_word.dest; /* slot 4-2 */
     built_word <<= 2; /* slot 1-0 since encoding is always 00  */
     CODE_IMG[word_location] = built_word ;
+}
+
+/* to add machine word for symbol location in 2nd pass*/
+void add_machine_word_symbol(char* dec_address, int IC){
+    int word_location = IC + START_ADDRESS;
+    CODE_IMG[word_location] = dec_address;
 }
 
 /* since register adressing can be both source or dest need bool flag to know which bits to flag */
