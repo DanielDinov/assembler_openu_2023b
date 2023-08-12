@@ -7,6 +7,7 @@
 #include "symbol_table.h"
 #include "util.h"
 
+/* TODO reset to null pointers right after use */
 /* second_pass gets an .am file and access to symbol table to update and finish the code and data images */
 
 bool secondPass(FILE* file, char* fileName)
@@ -17,7 +18,7 @@ bool secondPass(FILE* file, char* fileName)
 	int ic = 0, current_line = 0;
 	symbol_data* symbol = NULL;
 	parameter first_param, second_param;
-    cmd current_cmd;
+    cmd* current_cmd;
 
 	while (fgets(line, MAX_LINE_LEN + 2, file) != NULL)
 	{
@@ -54,12 +55,12 @@ bool secondPass(FILE* file, char* fileName)
 
             ic++;
 
-            switch (current_cmd.num_of_operands)
+            switch (current_cmd -> num_of_operands)
 			{
             case 0:
                 if (first_param.address != no_addresing)
 				{
-                    fprintf(stderr, "Line %d cmd %s shouldnt receive parameters",current_line,current_cmd.command_name);
+                    fprintf(stderr, "Line %d cmd %s shouldnt receive parameters",current_line,current_cmd->command_name);
                     success_flag = false;
                 }
                 break;
@@ -67,7 +68,7 @@ bool secondPass(FILE* file, char* fileName)
             case 1:
                 if (first_param.address == no_addresing || second_param.address != no_addresing)
 				{
-                    fprintf(stderr, "Line %d cmd %s should receive 1 parameter",current_line,current_cmd.command_name);
+                    fprintf(stderr, "Line %d cmd %s should receive 1 parameter",current_line,current_cmd->command_name);
                     success_flag = false;
                 }
                 /* direct addressing will be handled in second pass since not enough data currently */
@@ -78,7 +79,7 @@ bool secondPass(FILE* file, char* fileName)
             case 2:
                 if (first_param.address == no_addresing || second_param.address == no_addresing)
 				{
-                    fprintf(stderr, "Line %d cmd %s should receive 2 parameter",current_line,current_cmd.command_name);
+                    fprintf(stderr, "Line %d cmd %s should receive 2 parameter",current_line,current_cmd->command_name);
                     success_flag = false;
                 }
                 /* when both addressing types are register they share a single word */

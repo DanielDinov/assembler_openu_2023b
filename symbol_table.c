@@ -14,7 +14,7 @@ void create_new_symbol_list() {
 symbol_data* create_new_symbol_data(char name[], int value, symbol_attribute attribute) {
     symbol_data* data = (symbol_data*)malloc(sizeof(symbol_data));
     if (data == NULL) {
-        fprintf(stderr, "line %d unable to allocate memory",current_line)
+        fprintf(stderr, "line %d unable to allocate memory",current_line);
         return NULL;
     }
     strncpy(data->symbol.name, name, SYMBOL_MAX_NAME_SIZE);
