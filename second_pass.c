@@ -14,7 +14,7 @@ bool secondPass(FILE* file, char* fileName)
 {
 	char line[MAX_LINE_LEN + 2];
 	char* token = NULL;
-	bool success_flag = true, update_entry = false;
+	bool success_flag = true, update_entry = false, make_entry = false;
 	int ic = 0, current_line = 0;
 	symbol_data* symbol = NULL;
 	parameter first_param, second_param;
@@ -27,23 +27,32 @@ bool secondPass(FILE* file, char* fileName)
 		{
 			if(update_entry)
 			{
-				/*find symbol in table and update*/
-				/*add it to entry table*/
-				/*TODO flags for if found entry create .ent*/
+                symbol = find_symbol(token);
+                if (symbol == NULL)
+                {
+                    printf("ERROR: symbol: %s for entry wasn't initialized", token);
+                    success_flag = false;
+                }
+                else
+                symbol->symbol.attribute = SYMBOL_ENTRY;
+				/* TODO outside of the while loop, if flag is on, make entry file. iterate through symbols list, for each one with entry attribute add to list with its IC */
+				make_entry = true;
 				update_entry = false;
+                symbol = NULL;
 				strtok(NULL, delims);
 			}
 
-			if (token[strlen(token) - 1] == ':')
+			if (token[strlen(token) - 1] == ':') /* is Symbol */
 				strtok(NULL, delims);
 
 			if (strcmp(token, ".extern") == 0 || strcmp(token, ".string") == 0 || strcmp(token, ".data") == 0)
-				continue;
+				strtok(NULL, delims);
 
 			if (strcmp(token, ".entry") == 0)
 			{
 				update_entry = true;
 				strtok(NULL, delims);
+                continue;
 			}
 
             if((current_cmd = find_cmd(token)) == NULL){
@@ -101,14 +110,27 @@ bool secondPass(FILE* file, char* fileName)
                 success_flag = false;
                 break;
             }
-        }
 
-		if ((symbol = find_symbol(token)) != NULL)
+            if ((symbol = find_symbol(token)) != NULL)
 			add_machine_word_symbol(symbol->symbol.value);
 
-		if (isDirective(token) != 0)
-		{
+            if (isDirective(token) != 0)
+            {
 
-		}
-		
+            }
+        }
 	}
+
+    for (int i = START_ADDRESS; i <= START_ADDRESS + ic; i++)
+    {
+        if (CODE_IMG[i] == SYMBOL_PLACE_HOLDER)
+        {
+            printf("ERROR: Symbol in use was not initialized\n");
+            success_flag = false;
+        }
+    }
+
+    /* if make entry true - fopen str alocate cat with file name and .ent, make the file, go through the list and if entry add to the file.*/
+
+    return success_flag;
+}

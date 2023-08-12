@@ -5,6 +5,9 @@
 
 #define CMD_SUM 16
 #define START_ADDRESS 100
+#define SYMBOL_PLACE_HOLDER 0
+
+int CODE_IMG[MAX_DATA_SIZE];
 
 cmd find_cmd(char*);
 

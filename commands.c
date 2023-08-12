@@ -24,10 +24,10 @@ cmd cmd_table[CMD_SUM] = {
     {"stop", stop, 0}
 };
 
-cmd find_cmd(char* cmd_name){
+cmd* find_cmd(char* cmd_name){
     int i;
     for (i=0; i<CMD_SUM; i++){
-        if (strcmp(cmd_table[i], cmd_name) == 0)
+        if (strcmp((cmd_table[i].command_name), cmd_name) == 0)
             return cmd_table[i]; /* if here then found the cmd */
     }
     return NULL; /* return null if not found anything */

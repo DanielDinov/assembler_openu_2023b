@@ -15,6 +15,7 @@ bool macro_unfold(FILE* file, char* fileName)
 {
     bool openMacro = false, addMacro = false; /* flags for macro handling */
     bool skip = true; /* for printing loop */
+    bool success_flag = true;
     int counter = 0, macroLength = 0, nameLength = 0, currentLine = 1;  /* counters for macro amount and length */
     macroTable* MACROS = NULL;
     macroItem* newMacro = NULL; /* pointer to handle macro items */
@@ -26,7 +27,8 @@ bool macro_unfold(FILE* file, char* fileName)
     if (outputFile == NULL)
     {
         printf("Failed to open file: %s\n", outputFileName);
-        return NULL;
+        success_flag = false;
+        return success_flag;
     }
 
     /* (1) the loop below counts the amount of macros in the file to initialize an efficient table */
@@ -44,6 +46,7 @@ bool macro_unfold(FILE* file, char* fileName)
         if (lengthTest == NULL)
         {
             printf("ERROR: Excceeding max length of line at line: %d\n", currentLine);
+            success_flag = false;
         }
         lengthTest = NULL;
 
@@ -52,10 +55,10 @@ bool macro_unfold(FILE* file, char* fileName)
         {
             if (addMacro)
             {
-                if (isReservedWord(token))
+                if (isReservedWord(token)) /*TODO test it*/
                 {
                     printf("ERROR:at line %d Macro name is illegal (%s is a reserved word)\n", currentLine, token);
-                    exit(0);
+                    success_flag = false;
                 }
                 counter++;
                 addMacro = false;
@@ -152,7 +155,8 @@ bool macro_unfold(FILE* file, char* fileName)
                 if (searchMacro(MACROS, token))
                 {
                     printf("ERROR: in line %d macro name \"%s\" already exist!\n", currentLine, token);
-                    exit(0);
+                    success_flag = false;
+                    token = strtok(NULL, delims);
                 }
                 else
                 {
@@ -202,5 +206,5 @@ bool macro_unfold(FILE* file, char* fileName)
     free(outputFileName);
     fclose(outputFile);
     fclose(file);
-    return true;
+    return success_flag;
 }
