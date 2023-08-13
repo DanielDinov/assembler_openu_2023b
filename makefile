@@ -30,7 +30,7 @@ macro_table.o: macro_table.c macro_table.h $(GLOBAL_DEPS)
 	$(CC) -c macro_table.c $(CFLAGS) -o $@
 
 util.o: util.c util.h $(GLOBAL_DEPS)
-	$(CC) -c utils.c $(CFLAGS) -o $@
+	$(CC) -c util.c $(CFLAGS) -o $@
 
 symbol_table.o: symbol_table.c symbol_table.h $(GLOBAL_DEPS)
 	$(CC) -c symbol_table.c $(CFLAGS) -o $@
