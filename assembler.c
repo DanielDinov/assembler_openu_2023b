@@ -32,7 +32,7 @@ int main (int argc, char* argv[])
             printf("ERROR: first pass of %s failed.\n", fileName);
             continue;
         }
-        if ((first_pass = secondPass(fileName)) == false)
+        if ((second_pass = secondPass(fileName)) == false)
         {
             printf("ERROR: first pass of %s failed.\n", fileName);
             continue;

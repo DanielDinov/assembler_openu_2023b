@@ -18,7 +18,7 @@ typedef struct symbol_type_t {
 
 typedef struct symbol_data_type {
     symbol_type symbol;
-    symbol_data* next;
+    symbol_data_type* next;
 } symbol_data;
 
 
