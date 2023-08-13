@@ -16,4 +16,4 @@ void write_entry_file (symbol_type symbol, char* fileName);
 void write_external_file (symbol_type symbol, char* fileName);
 const char delims[4];
 
-#endif /* MY_UTILS_H */
+#endif

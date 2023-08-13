@@ -10,6 +10,11 @@
  *
  */
 
+char* am_extension = ".am";
+char* as_extension = ".as";
+char* entry_extension = ".ent";
+char* external_extension = ".ext";
+
 const char base64Lookup[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 const char* saved_word_strings[] =
