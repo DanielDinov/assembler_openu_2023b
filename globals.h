@@ -84,5 +84,7 @@ extern int current_line;
 
 char* am_extension = ".am";
 char* as_extension = ".as";
+char* entry_extension = ".ent";
+char* external_extension = ".ext";
 
 #endif

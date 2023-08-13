@@ -39,8 +39,7 @@ bool secondPass(FILE* file, char* fileName)
                         fprintf(stderr, "Line %d external label cannot be used in .entry",current_line);
                         success_flag = false;
                     } else {
-                        /* TODO: write function for this */
-                        write_entry_file(symbol->symbol)
+                        write_entry_file(symbol->symbol, fileName);
                     }
                 } 
             }

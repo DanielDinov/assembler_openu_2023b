@@ -12,6 +12,8 @@ bool is_register(char* word);
 int isDirective(char* word);
 char* str_allocate_cat(char* first_str, char* second_str);
 void format_line(char*);
+void write_entry_file (symbol_type symbol, char* fileName);
+void write_external_file (symbol_type symbol, char* fileName);
 const char delims[4];
 
 #endif /* MY_UTILS_H */

@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
 #include <ctype.h>
-#include <util.h>
+#include "util.h"
+#include "symbol_table.h"
 
 /*
  *
@@ -205,6 +205,36 @@ void format_line(char* word) {
     /* end string with null terminator */
     line[buffer_index] = '\0';
     strcpy(word, line)
+}
+
+void write_entry_file (symbol_type symbol, char* fileName)
+{
+    char* file_name_to_open = str_allocate_cat(fileName, entry_extension);
+    FILE* file = fopen(file_name_to_open, "a");
+    if (file == NULL)
+    {
+        printf("ERROR: unable to write into %s\n", file_name_to_open);
+        free(file_name_to_open);
+        exit(0);
+    }
+    fpritnf("%d\t%s", symbol.value, symbol.name);
+    fclose(file);
+    free(file_name_to_open);
+}
+
+void write_external_file (symbol_type symbol, char* fileName)
+{
+    char* file_name_to_open = str_allocate_cat(fileName, external_extension);
+    FILE* file = fopen(file_name_to_open, "a");
+    if (file == NULL)
+    {
+        printf("ERROR: unable to write into %s\n", file_name_to_open);
+        free(file_name_to_open);
+        exit(0);
+    }
+    fpritnf("%d\t%s", symbol.value, symbol.name);
+    fclose(file);
+    free(file_name_to_open);
 }
 
 const char delims[4] = " \n\t"; /* to ignore while tokenizing*/
