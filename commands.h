@@ -9,13 +9,11 @@
 
 int CODE_IMG[MAX_DATA_SIZE];
 
-cmd find_cmd(char*);
+cmd* find_cmd(char*);
 
 void add_machine_word(machine_word current_word, int IC);
 
-void add_machine_word_symbol(char* dec_address);
-
-bool add_extra_word_single_param(parameter param, bool is_source, int IC);
+bool add_extra_word_single_param(parameter param, bool is_source, int IC, char* fileName);
 
 void add_extra_word_double_param(char* source, char* dest, int IC);
 

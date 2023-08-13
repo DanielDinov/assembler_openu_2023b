@@ -27,9 +27,6 @@ bool firstPass(char* file_name){
         
         current_line++;
         format_line(line);
-
-        if (line[0] == ';' | lineToIgnore(line))
-            continue;
         
         if ((token = strtok(line, " ")) == NULL){
             fprintf(stderr, "Line %d failed to handle line %s",current_line,tmp_line_for_display);
@@ -111,7 +108,7 @@ bool firstPass(char* file_name){
                 while(token)
                     token = strtok(NULL," ");
             }
-            if ((token = strok(NULL, " ")) != NULL){
+            if ((token = strtok(NULL, " ")) != NULL){
                 fprintf(stderr, "Line %d extraneous text after request",current_line);
                 success_flag = false;
             }
@@ -124,7 +121,7 @@ bool firstPass(char* file_name){
                     success_flag = false;
             }
             if((current_cmd = find_cmd(token)) == NULL){
-                fprintf(stderr, "Line %d bad command,unable to process %d",current_line,token);
+                fprintf(stderr, "Line %d bad command,unable to process %s",current_line,token);
                 success_flag = false;
                 continue; /* continue to avoid NULL access violation */
             }
