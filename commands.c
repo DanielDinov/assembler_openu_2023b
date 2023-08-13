@@ -49,7 +49,7 @@ void add_machine_word_symbol(char* dec_address, int IC){
 }
 
 /* since register adressing can be both source or dest need bool flag to know which bits to flag */
-bool add_extra_word_single_param(parameter param, bool is_source, int IC){
+bool add_extra_word_single_param(parameter param, bool is_source, int IC, char* fileName){
     int word_location = IC + START_ADDRESS;
     char* end_ptr;
     int new_num;
@@ -80,8 +80,7 @@ bool add_extra_word_single_param(parameter param, bool is_source, int IC){
         new_num = symbol->symbol.value;
         if (symbol->symbol.attribute == SYMBOL_EXTERN){
             new_num<<2 + external; /* if external then add const for 01 bits in 1-0 location */
-            ///* TODO: complete write_external_file function */
-            write_external_file(symbol->symbol.name, word_location);
+            write_external_file(symbol->symbol, fileName);
         } else {
             /* if not external then label needs reloaction so add the const for 10 bits in 1-0 location */
             new_num<<2 + realocatable;

@@ -151,7 +151,7 @@ bool first_pass(char* file_name){
                 }
                 /* direct addressing will be handled in second pass since not enough data currently */
                 if (first_param.address == register_addr || first_param.address == immediate)
-                    if (!add_extra_word_single_param(first_param,false,ic))
+                    if (!add_extra_word_single_param(first_param,false,ic,file_name))
                         success_flag = false;
                 ic++
                 break;
@@ -168,11 +168,11 @@ bool first_pass(char* file_name){
                 } else { /* meaning 1 of the addressing type is not register addressing */
                     if (first_param.address != adders_error && second_param.address != adders_error){
                         if (first_param.address == register_addr || first_param.address == immediate)
-                            if (!add_extra_word_single_param(first_param,true,ic))
+                            if (!add_extra_word_single_param(first_param,true,ic,file_name))
                                 success_flag = false;
                         ic++;
                         if (second_param.address == register_addr || second_param.address == immediate)
-                            if (!add_extra_word_single_param(second_param,false,ic))
+                            if (!add_extra_word_single_param(second_param,false,ic,file_name))
                                 success_flag = false;
                         ic++;
                     }

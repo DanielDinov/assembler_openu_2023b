@@ -70,7 +70,7 @@ bool secondPass(FILE* file, char* fileName)
                     }
                     /* handling direct access since have all the data now */
                     if (first_param.address == direct)
-                        if (!add_extra_word_single_param(first_param,false,ic))
+                        if (!add_extra_word_single_param(first_param,false,ic,fileName))
                             success_flag = false;
                         ic++;
                     break;
@@ -88,11 +88,11 @@ bool secondPass(FILE* file, char* fileName)
                     } else { /* meaning 1 of the addressing type is not register addressing */
                         if (first_param.address != adders_error && second_param.address != adders_error){
                             if (first_param.address == direct)
-                                if (!add_extra_word_single_param(first_param,false,ic))
+                                if (!add_extra_word_single_param(first_param,false,ic,fileName))
                                     success_flag = false;
                             ic++;
                             if (second_param.address == direct)
-                                if (!add_extra_word_single_param(first_param,false,ic))
+                                if (!add_extra_word_single_param(first_param,false,ic,fileName))
                                     success_flag = false;
                             ic++;
                         }
