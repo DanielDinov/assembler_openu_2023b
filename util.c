@@ -217,7 +217,7 @@ void write_entry_file (symbol_type symbol, char* fileName)
         free(file_name_to_open);
         exit(0);
     }
-    fprintf("%d\t%s", symbol.value, symbol.name);
+    fprintf(file, "%d\t%s", symbol.value, symbol.name);
     fclose(file);
     free(file_name_to_open);
 }
@@ -232,7 +232,7 @@ void write_external_file (symbol_type symbol, char* fileName)
         free(file_name_to_open);
         exit(0);
     }
-    fprintf("%d\t%s", symbol.value, symbol.name);
+    fprintf(file, "%d\t%s", symbol.value, symbol.name);
     fclose(file);
     free(file_name_to_open);
 }
