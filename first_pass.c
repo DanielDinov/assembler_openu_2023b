@@ -7,7 +7,7 @@ bool first_pass(char* file_name){
     int ic = 0,dc = 0, current_line = 0,dc_incerement;
     char line[MAX_LINE_LEN + 1] = "", tmp_line_for_display[MAX_LINE_LEN + 1];
     char* token;
-    bool sucess_flag = true, has_label;
+    bool success_flag = true, has_label;
     FILE* working_file;
     char symbol_name[SYMBOL_MAX_NAME_SIZE+1];
     parameter first_param, second_param;
@@ -32,7 +32,7 @@ bool first_pass(char* file_name){
         
         if ((token = strtok(line, " ")) == NULL){
             fprintf(stderr, "Line %d failed to handle line %s",current_line,tmp_line_for_display);
-            sucess_flag = false;
+            success_flag = false;
         }
 
         /* checking for symbol */
@@ -40,7 +40,7 @@ bool first_pass(char* file_name){
             /* not checking for len since was defined as 31 in start of project */
             if (!isalpha(token[0])){
                 fprintf(stderr, "Line %d label cannot start with number",current_line);
-                sucess_flag = false;
+                success_flag = false;
             }
 
             /* copying token into variable for each of access later on */
@@ -51,11 +51,11 @@ bool first_pass(char* file_name){
             /* checking for reserved word and empty declarations */
             if (isReservedWord(symbol_name)){
                 fprintf(stderr, "Line %d label cannot be a reserved word",current_line);
-                sucess_flag = false;
+                success_flag = false;
             }
             if ((token = strtok(NULL, " ")) == NULL){
                 fprintf(stderr, "Line %d cannot have empty label declaration",current_line);
-                sucess_flag = false;
+                success_flag = false;
             }
         }
         
@@ -64,16 +64,16 @@ bool first_pass(char* file_name){
             if (strcmp(token, ".data") == 0){
                 if (has_label){
                     if (!add_symbol_to_list(symbol_name,dc,SYMBOL_DATA))
-                        sucess_flag = false;
+                        success_flag = false;
                 }
                 if((token = strtok(NULL, " ")) == NULL){
                     fprintf(stderr,"Line %d no parameters after .data line",current_line);
-                    sucess_flag = false;
+                    success_flag = false;
                 }
                 while (token){
                     if (!add_data_num(token,dc)){
                         fprintf(stderr,"Line %d failed to add numbers to data image",current_line);
-                        sucess_flag = false;
+                        success_flag = false;
                         break;
                     }
                     /* increment dc if sucessfully added data */
@@ -83,36 +83,36 @@ bool first_pass(char* file_name){
             } else if (strcmp(token, ".string") == 0){
                 if (has_label){
                     if (!add_symbol_to_list(symbol_name,dc,SYMBOL_DATA))
-                        sucess_flag = false;
+                        success_flag = false;
                 }
                 if((token = strtok(NULL, " ")) == NULL){
                     fprintf(stderr, "Line %d no parameters after .string line",current_line);
-                    sucess_flag = false;
+                    success_flag = false;
                 }
                 dc_incerement = add_data_string(token,dc);
                 if (dc_incerement == 0 || dc_incerement == -1){
                     fprintf(stderr, "Line %d failed to add string to data image",current_line);
-                    sucess_flag = false;
+                    success_flag = false;
                 } else { dc+=dc_incerement }
             } else if (strcmp(token, ".extern") == 0){
                 if((token = strtok(NULL, " ")) == NULL){
                     fprintf(stderr, "Line %d no parameters after .extern line",current_line);
-                    sucess_flag = false;
+                    success_flag = false;
                 }
                 if (!add_symbol_to_list(token,dc,SYMBOL_EXTERN))
-                    sucess_flag = false;
+                    success_flag = false;
             } else if (strcmp(token, ".extry") == 0){
                 /* here so it wont fall in the next else cluase but will be handled in 2nd pass */
             } else {
                 fprintf(stderr, "Line %d unknown request",current_line);
-                sucess_flag = false;
+                success_flag = false;
                 /* clears token to not fall in the extraneous text clause */
                 while(token)
                     token = strtok(NULL," ")
             }
             if ((token = strok(NULL, " ")) != NULL){
                 fprintf(stderr, "Line %d extraneous text after request",current_line);
-                sucess_flag = false;
+                success_flag = false;
             }
         }
         /* if here meaning command type line */
@@ -120,12 +120,12 @@ bool first_pass(char* file_name){
             ///* TODO: handle command type line */
             if (has_label){
                 if (!add_symbol_to_list(symbol_name,dc,SYMBOL_DATA))
-                    sucess_flag = false;
+                    success_flag = false;
             }
             if((current_cmd = find_cmd(token)) == NULL){
                 fprintf(stderr, "Line %d bad command,unable to process %d",current_line,token);
-                sucess_flag = false;
-                return false; /* return to avoid NULL access violation */
+                success_flag = false;
+                continue; /* continue to avoid NULL access violation */
             }
             find_parameters(first_param, second_param);
 
@@ -140,26 +140,26 @@ bool first_pass(char* file_name){
             case 0:
                 if (first_param.address != no_addresing){
                     fprintf(stderr, "Line %d cmd %s shouldnt receive parameters",current_line,current_cmd.command_name);
-                    sucess_flag = false;
+                    success_flag = false;
                 }
                 break;
             
             case 1:
                 if (first_param.address == no_addresing || second_param != no_addresing){
                     fprintf(stderr, "Line %d cmd %s should receive 1 parameter",current_line,current_cmd.command_name);
-                    sucess_flag = false;
+                    success_flag = false;
                 }
                 /* direct addressing will be handled in second pass since not enough data currently */
                 if (first_param.address == register_addr || first_param.address == immediate)
                     if (!add_extra_word_single_param(first_param,false,ic))
-                        sucess_flag = false;
+                        success_flag = false;
                 ic++
                 break;
             
             case 2:
                 if (first_param.address == no_addresing || second_param == no_addresing){
                     fprintf(stderr, "Line %d cmd %s should receive 2 parameter",current_line,current_cmd.command_name);
-                    sucess_flag = false;
+                    success_flag = false;
                 }
                 /* when both addressing types are register they share a single word */
                 if (first_param.address == register_addr && second_param.address == register_addr){
@@ -169,11 +169,11 @@ bool first_pass(char* file_name){
                     if (first_param.address != adders_error && second_param.address != adders_error){
                         if (first_param.address == register_addr || first_param.address == immediate)
                             if (!add_extra_word_single_param(first_param,true,ic))
-                                sucess_flag = false;
+                                success_flag = false;
                         ic++;
                         if (second_param.address == register_addr || second_param.address == immediate)
                             if (!add_extra_word_single_param(second_param,false,ic))
-                                sucess_flag = false;
+                                success_flag = false;
                         ic++;
                     }
                 }
@@ -181,11 +181,11 @@ bool first_pass(char* file_name){
             
             default:
                 fprintf(stderr, "Line %d bad command,unable to process %d",current_line,token);
-                sucess_flag = false;
+                success_flag = false;
                 break;
             }
         }
 
     }
-    return sucess_flag;
+    return success_flag;
 }
