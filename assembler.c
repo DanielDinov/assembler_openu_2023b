@@ -8,7 +8,6 @@
 #include "first_pass.h"
 #include "second_pass.h"
 
-/* beta version for preAsmblr */
 /* get the file name as an argument, no extension is assumed.*/
 int main (int argc, char* argv[])
 {
@@ -41,5 +40,4 @@ int main (int argc, char* argv[])
     }
 
     return 0;
-	
 }
