@@ -2,7 +2,7 @@
  CC = gcc
  CFLAGS = -Wall -ansi -pedantic -std=c11 -ggdb3 # Flags
  GLOBAL_DEPS = globals.h # Dependencies for everything
- EXE_DEPS = assembler.o util.o macro_table.o macro_unfold.o commands.o data_handler.o symbol_table. o first_pass.o second_pass.o # Deps for exe
+ EXE_DEPS = assembler.o util.o macro_table.o macro_unfold.o commands.o data_handler.o symbol_table.o first_pass.o second_pass.o # Deps for exe
  
  ## Executable
 assembler: $(EXE_DEPS) $(GLOBAL_DEPS)
