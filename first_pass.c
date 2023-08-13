@@ -11,7 +11,7 @@ bool first_pass(char* file_name){
     FILE* working_file;
     char symbol_name[SYMBOL_MAX_NAME_SIZE+1];
     parameter first_param, second_param;
-    cmd current_cmd;
+    cmd* current_cmd;
     machine_word current_machine_word;
 
     if ((working_file = fopen(file_name, "r")) == NULL){
@@ -129,24 +129,24 @@ bool first_pass(char* file_name){
             }
             find_parameters(first_param, second_param);
 
-            current_machine_word.op_code = current_cmd.op_code;
+            current_machine_word.op_code = current_cmd->op_code;
             current_machine_word.source = first_param.address;
             current_machine_word.dest = second_param.address;
 
             add_machine_word(current_machine_word,ic);
             ic++;
 
-            switch (current_cmd.num_of_operands){
+            switch (current_cmd->num_of_operands){
             case 0:
                 if (first_param.address != no_addresing){
-                    fprintf(stderr, "Line %d cmd %s shouldnt receive parameters",current_line,current_cmd.command_name);
+                    fprintf(stderr, "Line %d cmd %s shouldnt receive parameters",current_line,current_cmd->command_name);
                     success_flag = false;
                 }
                 break;
             
             case 1:
                 if (first_param.address == no_addresing || second_param != no_addresing){
-                    fprintf(stderr, "Line %d cmd %s should receive 1 parameter",current_line,current_cmd.command_name);
+                    fprintf(stderr, "Line %d cmd %s should receive 1 parameter",current_line,current_cmd->command_name);
                     success_flag = false;
                 }
                 /* direct addressing will be handled in second pass since not enough data currently */
@@ -158,7 +158,7 @@ bool first_pass(char* file_name){
             
             case 2:
                 if (first_param.address == no_addresing || second_param == no_addresing){
-                    fprintf(stderr, "Line %d cmd %s should receive 2 parameter",current_line,current_cmd.command_name);
+                    fprintf(stderr, "Line %d cmd %s should receive 2 parameter",current_line,current_cmd->command_name);
                     success_flag = false;
                 }
                 /* when both addressing types are register they share a single word */
