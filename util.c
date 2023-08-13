@@ -150,7 +150,6 @@ bool isReservedWord(char* word)
 }
 
 bool is_register(char* word) {
-    int i;
     for (int i = 0; i < sizeof(registers) / sizeof(registers[0]); i++) {
         if (strcmp(word, registers[i]) == 0)
             return true;
@@ -218,7 +217,7 @@ void write_entry_file (symbol_type symbol, char* fileName)
         free(file_name_to_open);
         exit(0);
     }
-    fpritnf("%d\t%s", symbol.value, symbol.name);
+    fprintf("%d\t%s", symbol.value, symbol.name);
     fclose(file);
     free(file_name_to_open);
 }
@@ -233,7 +232,7 @@ void write_external_file (symbol_type symbol, char* fileName)
         free(file_name_to_open);
         exit(0);
     }
-    fpritnf("%d\t%s", symbol.value, symbol.name);
+    fprintf("%d\t%s", symbol.value, symbol.name);
     fclose(file);
     free(file_name_to_open);
 }
