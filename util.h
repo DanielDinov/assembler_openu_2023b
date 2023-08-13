@@ -4,6 +4,11 @@
 #include "globals.h"
 #include "symbol_table.h"
 
+char* am_extension;
+char* as_extension;
+char* entry_extension;
+char* external_extension;
+
 int decimalToBinary(int decimal);
 char* binaryToBase64(const char* binary);
 bool lineToIgnore(char* line);

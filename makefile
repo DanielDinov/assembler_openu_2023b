@@ -1,22 +1,42 @@
-CC = gcc
+# Compilation macros
+ CC = gcc
+ CFLAGS = -Wall -ansi -pedantic -std=c11 -ggdb3 # Flags
+ GLOBAL_DEPS = globals.h # Dependencies for everything
+ EXE_DEPS = assembler.o util.o macro_table.o macro_unfold.o commands.o data_handler.o symbol_table. o first_pass.o second_pass.o # Deps for exe
+ 
+ ## Executable
+assembler: $(EXE_DEPS) $(GLOBAL_DEPS)
+	$(CC) -g $(EXE_DEPS) $(CFLAGS) -o $@
+	
+assembler.o:  assembler.c $(GLOBAL_DEPS)
+	$(CC) -c assembler.c $(CFLAGS) -o $@
 
-CFLAGS = -Wall -ansi -pedantic -std=c11 -ggdb3
+macro_unfold.o: macro_unfold.c macro_unfold.h $(GLOBAL_DEPS)
+	$(CC) -c macro_unfold.c $(CFLAGS) -o $@
 
-SRC_FILES = assembler.c util.c macro_unfold.c macro_table.c first_pass.c second_pass.c commands.c data_handler.c
+first_pass.o: first_pass.c first_pass.h $(GLOBAL_DEPS)
+	$(CC) -c first_pass.c $(CFLAGS) -o $@
 
-HEADER_FILES = globals.h util.h macro_unfold.h macro_table.h first_pass.h second_pass.h commands.h data_handler.h
+second_pass.o: second_pass.c second_pass.h $(GLOBAL_DEPS)
+	$(CC) -c second_pass.c $(CFLAGS) -o $@
 
-OUTPUT = myProg
+commands.o: commands.c commands.h $(GLOBAL_DEPS)
+	$(CC) -c commands.c $(CFLAGS) -o $@
 
+data_handler.o: data_handler.c data_handler.h $(GLOBAL_DEPS)
+	$(CC) -c data_handler.c $(CFLAGS) -o $@
 
+macro_table.o: macro_table.c macro_table.h $(GLOBAL_DEPS)
+	$(CC) -c macro_table.c $(CFLAGS) -o $@
 
-$(OUTPUT): $(SRC_FILES) $(HEADER_FILES)
+util.o: util.c util.h $(GLOBAL_DEPS)
+	$(CC) -c utils.c $(CFLAGS) -o $@
 
-	$(CC) $(CFLAGS) -o $(OUTPUT) $(SRC_FILES)
-
-
-
+symbol_table.o: symbol_table.c symbol_table.h $(GLOBAL_DEPS)
+	$(CC) -c symbol_table.c $(CFLAGS) -o $@
+	
 clean:
+	rm -rf *.o *.am *.ob *.ent *.ext 
 
-	rm -f $(OUTPUT)
+
 

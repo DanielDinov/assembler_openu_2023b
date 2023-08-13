@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <string.h>
+#include <stdlib.h>
 #include "util.h"
 #include "globals.h"
 #include "macro_unfold.h"
