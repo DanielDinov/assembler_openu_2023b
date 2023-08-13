@@ -11,7 +11,7 @@
    second read: copy content to .am file, insert and unfold macros, get rid of comment and empty lines
    return false if found errors or couldn't unfold macros, else return true */
 
-bool macro_unfold(FILE* file, char* fileName)
+bool macro_unfold(char* fileName)
 {
     bool openMacro = false, addMacro = false; /* flags for macro handling */
     bool skip = true; /* for printing loop */
@@ -21,13 +21,27 @@ bool macro_unfold(FILE* file, char* fileName)
     macroItem* newMacro = NULL; /* pointer to handle macro items */
     char *token = NULL, *macroContent = NULL, *macroName = NULL;
     char line[MAX_LINE_LEN + 2];
+    char* sourceFileName = str_allocate_cat(fileName, as_extension);
     char* outputFileName = str_allocate_cat(fileName, am_extension); /* file name argument comes with no proper extension, fix it before open file */
+
+    FILE* file = fopen(outputFileName, "r+");
+    if (file == NULL)
+    {
+        printf("Failed to open file: %s\n", sourceFileName);
+        success_flag = false;
+        free(outputFileName);
+        free(sourceFileName);
+        return success_flag;
+    }
 
     FILE* outputFile = fopen(outputFileName, "w");
     if (outputFile == NULL)
     {
         printf("Failed to open file: %s\n", outputFileName);
         success_flag = false;
+        free(outputFileName);
+        free(sourceFileName);
+        fclose(file);
         return success_flag;
     }
 
@@ -206,5 +220,6 @@ bool macro_unfold(FILE* file, char* fileName)
     free(outputFileName);
     fclose(outputFile);
     fclose(file);
+    
     return success_flag;
 }

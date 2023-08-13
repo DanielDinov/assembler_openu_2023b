@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 #include <string.h>
 #include "util.h"
+#include "globals.h"
 
 /*hash table for macros*/
 /*TODO update function names to be suit */

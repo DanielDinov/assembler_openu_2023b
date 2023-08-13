@@ -10,15 +10,23 @@
 /* TODO reset to null pointers right after use */
 /* second_pass gets an .am file and access to symbol table to update and finish the code and data images */
 
-bool secondPass(FILE* file, char* fileName)
+bool secondPass(char* fileName)
 {
 	char line[MAX_LINE_LEN + 2];
-	char* token = NULL;
-	bool success_flag = true, update_entry = false, make_entry = false;
+	char* token = NULL, fileNameExtended = str_allocate_cat (fileName, am_extension);
+	bool success_flag = true;
 	int ic = 0, current_line = 0;
 	symbol_data* symbol = NULL;
 	parameter first_param, second_param;
     cmd* current_cmd;
+    FILE* file;
+
+    if((file = fopen(fileName, "r")) == NULL)
+    {
+        printf("Failed to open file %s\n",fileName);
+        free(fileNameExtended);
+        return false; /* nothing to continue with */
+    }
 
 	while (fgets(line, MAX_LINE_LEN + 2, file) != NULL){
         current_line++;
@@ -106,6 +114,9 @@ bool secondPass(FILE* file, char* fileName)
             }
         }
 	}
+    rewind(file);
+    free(fileNameExtended);
+    fclose(file);
 
     return success_flag;
 }

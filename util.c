@@ -3,6 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 #include "util.h"
+#include "globals.h"
 #include "symbol_table.h"
 
 /*
@@ -204,7 +205,7 @@ void format_line(char* word) {
     }
     /* end string with null terminator */
     line[buffer_index] = '\0';
-    strcpy(word, line)
+    strcpy(word, line);
 }
 
 void write_entry_file (symbol_type symbol, char* fileName)

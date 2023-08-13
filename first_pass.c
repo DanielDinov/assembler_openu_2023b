@@ -3,10 +3,10 @@
 #include "symbol_table.h"
 #include "util.h"
 
-bool first_pass(char* file_name){
+bool firstPass(char* file_name){
     int ic = 0,dc = 0, current_line = 0,dc_incerement;
     char line[MAX_LINE_LEN + 1] = "", tmp_line_for_display[MAX_LINE_LEN + 1];
-    char* token;
+    char *token, *file_name_extended = str_allocate_cat(file_name, am_extension);
     bool success_flag = true, has_label;
     FILE* working_file;
     char symbol_name[SYMBOL_MAX_NAME_SIZE+1];
@@ -14,8 +14,9 @@ bool first_pass(char* file_name){
     cmd* current_cmd;
     machine_word current_machine_word;
 
-    if ((working_file = fopen(file_name, "r")) == NULL){
-        printf("Failed to open file %s",file_name);
+    if ((working_file = fopen(file_name_extended, "r")) == NULL){
+        printf("Failed to open file %s\n",file_name_extended);
+        free(file_name_extended);
         return false; /* nothing to continue with */
     }
     while (fgets(line, MAX_LINE_LEN+1, working_file) != NULL){
@@ -93,7 +94,7 @@ bool first_pass(char* file_name){
                 if (dc_incerement == 0 || dc_incerement == -1){
                     fprintf(stderr, "Line %d failed to add string to data image",current_line);
                     success_flag = false;
-                } else { dc+=dc_incerement }
+                } else { dc+=dc_incerement; }
             } else if (strcmp(token, ".extern") == 0){
                 if((token = strtok(NULL, " ")) == NULL){
                     fprintf(stderr, "Line %d no parameters after .extern line",current_line);
@@ -108,7 +109,7 @@ bool first_pass(char* file_name){
                 success_flag = false;
                 /* clears token to not fall in the extraneous text clause */
                 while(token)
-                    token = strtok(NULL," ")
+                    token = strtok(NULL," ");
             }
             if ((token = strok(NULL, " ")) != NULL){
                 fprintf(stderr, "Line %d extraneous text after request",current_line);
@@ -145,7 +146,7 @@ bool first_pass(char* file_name){
                 break;
             
             case 1:
-                if (first_param.address == no_addresing || second_param != no_addresing){
+                if (first_param.address == no_addresing || second_param.address != no_addresing){
                     fprintf(stderr, "Line %d cmd %s should receive 1 parameter",current_line,current_cmd->command_name);
                     success_flag = false;
                 }
@@ -153,11 +154,11 @@ bool first_pass(char* file_name){
                 if (first_param.address == register_addr || first_param.address == immediate)
                     if (!add_extra_word_single_param(first_param,false,ic,file_name))
                         success_flag = false;
-                ic++
+                ic++;
                 break;
             
             case 2:
-                if (first_param.address == no_addresing || second_param == no_addresing){
+                if (first_param.address == no_addresing || second_param.address == no_addresing){
                     fprintf(stderr, "Line %d cmd %s should receive 2 parameter",current_line,current_cmd->command_name);
                     success_flag = false;
                 }
@@ -187,5 +188,9 @@ bool first_pass(char* file_name){
         }
 
     }
+    rewind(working_file);
+    free(file_name_extended);
+    fclose(working_file);
+
     return success_flag;
 }

@@ -1,7 +1,8 @@
 #ifndef MACRO_TABLE_H
 #define MACRO_TABLE_H
 
-#include <stdbool.h>
+#include "util.h"
+#include "globals.h"
 
 /* hashing function */
 unsigned long macroHash(int size, char* macroName, unsigned long hash);
