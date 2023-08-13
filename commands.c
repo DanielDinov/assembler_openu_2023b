@@ -28,7 +28,7 @@ cmd* find_cmd(char* cmd_name){
     int i;
     for (i=0; i<CMD_SUM; i++){
         if (strcmp((cmd_table[i].command_name), cmd_name) == 0)
-            return cmd_table[i]; /* if here then found the cmd */
+            return &cmd_table[i]; /* if here then found the cmd */
     }
     return NULL; /* return null if not found anything */
 }
@@ -122,7 +122,7 @@ void find_parameters(parameter first_param, parameter second_param){
         } else { /* starts with number so only immediate */
             new_num = strtol(token,&end_ptr,10); /* convert given str to base 10 long */
             if (*end_ptr != '\0'){
-                fprintf(stderr, "Line %d with variable %s,unable to convert,got %d after convertion",current_line, name, new_num);
+                fprintf(stderr, "Line %d with variable %s,unable to convert,got %d after convertion",current_line, first_param.param_name, new_num);
                 return;
             }
             if (new_num > MAX_NUMBER|| new_num < MIN_NUMBER){ /* out of numbers range */
@@ -160,7 +160,7 @@ void find_parameters(parameter first_param, parameter second_param){
         } else { /* starts with number so only immediate */
             new_num = strtol(token,&end_ptr,10); /* convert given str to base 10 long */
             if (*end_ptr != '\0'){
-                fprintf(stderr, "Line %d with variable %s,unable to convert,got %d after convertion",current_line, name, new_num);
+                fprintf(stderr, "Line %d with variable %s,unable to convert,got %d after convertion",current_line, second_param.param_name, new_num);
                 return;
             }
             if (new_num > MAX_NUMBER|| new_num < MIN_NUMBER){ /* out of numbers range */

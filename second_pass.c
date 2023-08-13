@@ -13,7 +13,7 @@
 bool secondPass(char* fileName)
 {
 	char line[MAX_LINE_LEN + 2];
-	char* token = NULL, fileNameExtended = str_allocate_cat (fileName, am_extension);
+	char* token = NULL, *fileNameExtended = str_allocate_cat (fileName, am_extension);
 	bool success_flag = true;
 	int ic = 0, current_line = 0;
 	symbol_data* symbol = NULL;
@@ -54,7 +54,7 @@ bool secondPass(char* fileName)
         } else {
             /* commands here */
             if((current_cmd = find_cmd(token)) == NULL){
-                fprintf(stderr, "Line %d bad command,unable to process %d",current_line,token);
+                fprintf(stderr, "Line %d bad command,unable to process %s",current_line,token);
                 success_flag = false;
                 continue;
             }
@@ -108,7 +108,7 @@ bool secondPass(char* fileName)
                     break;
                 
                 default:
-                    fprintf(stderr, "Line %d bad command,unable to process %d",current_line,token);
+                    fprintf(stderr, "Line %d bad command,unable to process %s",current_line,token);
                     success_flag = false;
                     break;
             }

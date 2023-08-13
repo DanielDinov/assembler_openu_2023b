@@ -178,7 +178,7 @@ bool firstPass(char* file_name){
                 break;
             
             default:
-                fprintf(stderr, "Line %d bad command,unable to process %d",current_line,token);
+                fprintf(stderr, "Line %d bad command,unable to process %s",current_line,token);
                 success_flag = false;
                 break;
             }
