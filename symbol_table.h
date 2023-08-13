@@ -21,6 +21,9 @@ typedef struct symbol_data_type {
     struct symbol_data* next;
 } symbol_data;
 
+typedef struct symbol_list_type {
+    struct symbol_data* head;
+} symbol_list;
 
 void create_new_symbol_list();
 
