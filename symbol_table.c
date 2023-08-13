@@ -31,7 +31,7 @@ bool add_symbol_to_list(char name[], int value, symbol_attribute attribute) {
         return false;
     }
     if (does_symbol_exist(data)){
-        fprintf(stderr, "line %d symbol already exists",current_line)
+        fprintf(stderr, "line %d symbol already exists",current_line);
         return false;
     }
     if (symbol_list->head == NULL) {

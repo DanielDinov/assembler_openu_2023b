@@ -2,6 +2,7 @@
 #define MY_UTILS_H
 
 #include "globals.h"
+#include "symbol_table.h"
 
 int decimalToBinary(int decimal);
 char* binaryToBase64(const char* binary);

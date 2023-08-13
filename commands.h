@@ -19,6 +19,6 @@ bool add_extra_word_single_param(parameter param, bool is_source, int IC);
 
 void add_extra_word_double_param(char* source, char* dest, int IC);
 
-void find_parameters(parameter, parameter)
+void find_parameters(parameter first_param, parameter second_param);
 
 #endif
