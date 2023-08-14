@@ -24,19 +24,22 @@ int main (int argc, char* argv[])
         fileName = argv[i];
         if ((pre_proccesor = macro_unfold(fileName)) == false)
         {
-            printf("ERROR: pre proccesor of %s failed.\n", fileName);
+            printf("ERROR: pre preprocessor of %s failed.\n", fileName);
             continue;
         }
+        printf("preprocessor finished\n");
         if ((first_pass = firstPass(fileName)) == false)
         {
             printf("ERROR: first pass of %s failed.\n", fileName);
             continue;
         }
+        printf("first pass finished\n");
         if ((second_pass = secondPass(fileName)) == false)
         {
             printf("ERROR: first pass of %s failed.\n", fileName);
             continue;
         }
+        printf("second pass finished\n");
     }
 
     return 0;
