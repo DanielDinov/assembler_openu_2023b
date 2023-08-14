@@ -2,12 +2,14 @@
 #include <string.h>
 #include "symbol_table.h"
 
-symbol_data* symbol_list;
+symbol_list* symbol_list_instance = NULL;
 
 void create_new_symbol_list() {
-    symbol_data* head = create_new_symbol_data("", -1, SYMBOL_ERROR);
-    if (head != NULL) {
-        symbol_list = head;
+    symbol_list_instance = (symbol_list*)malloc(sizeof(symbol_list));
+    if (symbol_list_instance != NULL) {
+        symbol_list_instance->head = NULL;
+    } else {
+        fprintf(stderr, "Unable to allocate memory for symbol_list_instance\n");
     }
 }
 
@@ -25,32 +27,35 @@ symbol_data* create_new_symbol_data(char name[], int value, symbol_attribute att
 }
 
 bool add_symbol_to_list(char name[], int value, symbol_attribute attribute) {
+    if (symbol_list_instance == NULL) {
+        return false;
+    }
     symbol_data* data = create_new_symbol_data(name,value,attribute);
     symbol_data* current;
-    if (symbol_list == NULL || data == NULL) {
+    if (data == NULL) {
         return false;
     }
     if (does_symbol_exist(data)){
         fprintf(stderr, "line %d symbol already exists",current_line);
         return false;
     }
-    if (symbol_list->head == NULL) {
-        symbol_list->head = data;
+    if (symbol_list_instance->head == NULL) {
+        symbol_list_instance->head = data;
     } else {
-        current = symbol_list->head;
+        current = symbol_list_instance->head;
         while (current->next != NULL) {
             current = current->next;
         }
         current->next = data;
     }
-    return true
+    return true;
 }
 
 symbol_data* find_symbol(char name[]) {
-    symbol_data* current = symbol_list->head;
-    if (symbol_list == NULL) {
+    if (symbol_list_instance == NULL) {
         return NULL;
     }
+    symbol_data* current = symbol_list_instance->head;
     while (current != NULL) {
         if (strcmp(current->symbol.name, name) == 0) {
             return current;  // Symbol found
@@ -62,10 +67,10 @@ symbol_data* find_symbol(char name[]) {
 }
 
 bool does_symbol_exist(symbol_data* data) {
-    symbol_data* current = symbol_list->head;
-    if (symbol_list == NULL || data == NULL) {
+    if (symbol_list_instance == NULL || data == NULL) {
         return false;
     }
+    symbol_data* current = symbol_list_instance->head;
     while (current != NULL) {
         if (strcmp(current->symbol.name, data->symbol.name) == 0) {
             return true;  // Symbol exists in the list
@@ -77,16 +82,16 @@ bool does_symbol_exist(symbol_data* data) {
 }
 
 void free_list() {
-    symbol_data* current = symbol_list->head;
-    symbol_data* temp;
-    if (symbol_list == NULL) {
+    if (symbol_list_instance == NULL) {
         return;
     }
+    symbol_data* current = symbol_list_instance->head;
+    symbol_data* temp;
     while (current != NULL) {
         temp = current;
         current = current->next;
         free(temp);
     }
-    
-    free(symbol_list);
+
+    free(symbol_list_instance);
 }

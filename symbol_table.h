@@ -18,11 +18,11 @@ typedef struct symbol_type_t {
 
 typedef struct symbol_data_type {
     symbol_type symbol;
-    struct symbol_data* next;
+    struct symbol_data_type* next;
 } symbol_data;
 
 typedef struct symbol_list_type {
-    struct symbol_data* head;
+    struct symbol_data_type* head;
 } symbol_list;
 
 void create_new_symbol_list();
@@ -33,7 +33,7 @@ bool add_symbol_to_list(char[], int, symbol_attribute);
 
 symbol_data* find_symbol(char[]);
 
-int does_symbol_exist(symbol_data*);
+bool does_symbol_exist(symbol_data*);
 
 void free_list();
 #endif

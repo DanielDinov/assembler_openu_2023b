@@ -1,6 +1,7 @@
 #include "commands.h"
 #include "symbol_table.h"
 #include "util.h"
+#include "globals.h"
 
 /*TODO out of array boundries check (over 1024)*/
 int CODE_IMG[MAX_DATA_SIZE];
@@ -73,11 +74,11 @@ bool add_extra_word_single_param(parameter param, bool is_source, int IC, char* 
         }
         new_num = symbol->symbol.value;
         if (symbol->symbol.attribute == SYMBOL_EXTERN){
-            new_num<<2 + external; /* if external then add const for 01 bits in 1-0 location */
+            new_num<<=2 + external; /* if external then add const for 01 bits in 1-0 location */
             write_external_file(symbol->symbol, fileName);
         } else {
             /* if not external then label needs reloaction so add the const for 10 bits in 1-0 location */
-            new_num<<2 + realocatable;
+            new_num<<=2 + realocatable;
         }
     }
     return true;
@@ -133,7 +134,7 @@ void find_parameters(parameter first_param, parameter second_param){
         }
     }
     /* after first param should be a comma */
-    if((token = strtok(NULL, " ")) != ','){
+    if((token = strtok(NULL, " ")) == NULL || *token == ','){
         second_param.address = no_addresing;
         has_comma = false;
     }

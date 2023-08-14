@@ -9,6 +9,6 @@
 #include "macro_table.h"
 #include "globals.h"
 
-bool macroUnfold(char* fileName);
+bool macro_unfold(char* fileName);
 
 #endif
