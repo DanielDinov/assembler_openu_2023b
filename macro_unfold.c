@@ -194,7 +194,8 @@ bool macro_unfold(char* fileName)
             /* no macro handling - copy paste to new file */
             else
             {
-                fprintf(outputFile, "%s%s", token, " ");
+                fprintf(outputFile, "%s", token);
+                fprintf(outputFile, "%s", " ");
                 skip = false;
                 token = strtok(NULL, delims);
             }
