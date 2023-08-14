@@ -24,10 +24,10 @@ bool macro_unfold(char* fileName)
     char* sourceFileName = str_allocate_cat(fileName, as_extension);
     char* outputFileName = str_allocate_cat(fileName, am_extension); /* file name argument comes with no proper extension, fix it before open file */
 
-    FILE* file = fopen(outputFileName, "r+");
+    FILE* file = fopen(sourceFileName, "r+");
     if (file == NULL)
     {
-        printf("Failed to open file: %s in preprocessor stage.\n", sourceFileName);
+        printf("Failed to open source file: %s in preprocessor stage.\n", sourceFileName);
         success_flag = false;
         free(outputFileName);
         free(sourceFileName);
@@ -37,14 +37,14 @@ bool macro_unfold(char* fileName)
     FILE* outputFile = fopen(outputFileName, "w");
     if (outputFile == NULL)
     {
-        printf("Failed to open file: %s\n", outputFileName);
+        printf("Failed to create the am file: %s\n", outputFileName);
         success_flag = false;
         free(outputFileName);
         free(sourceFileName);
         fclose(file);
         return success_flag;
     }
-
+    printf("opened both as and am files\n");/*tester remove*/
     /* (1) the loop below counts the amount of macros in the file to initialize an efficient table */
     while (fgets(line, MAX_LINE_LEN + 2, file) != NULL)
     {
@@ -88,7 +88,7 @@ bool macro_unfold(char* fileName)
     }
     rewind(file);
     currentLine = 1;
-
+    printf("finished 1st loop\n");/*tester remvoe*/
     /* if macro found in first read create a table to store it */
     if (counter > 0) 
     {
@@ -212,7 +212,7 @@ bool macro_unfold(char* fileName)
         }
     }
     rewind(file);
-
+    printf("finished 2nd loop\n");/*tester remvoe*/
     if (counter > 0)
     {
         freeMacroTable(MACROS);
