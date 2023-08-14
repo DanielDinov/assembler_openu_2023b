@@ -34,9 +34,3 @@ util.o: util.c util.h $(GLOBAL_DEPS)
 
 symbol_table.o: symbol_table.c symbol_table.h $(GLOBAL_DEPS)
 	$(CC) -c symbol_table.c $(CFLAGS) -o $@
-	
-clean:
-	rm -rf *.o *.am *.ob *.ent *.ext 
-
-
-
