@@ -57,11 +57,11 @@ bool add_extra_word_single_param(parameter param, bool is_source, int IC, char* 
     } else if (param.address == immediate) {
         new_num = strtol(param.param_name,&end_ptr,10); /* convert given str to base 10 long */
         if (*end_ptr != '\0'){
-            fprintf(stderr, "Line %d with variable %s,unable to convert,got %d after convertion",current_line, param.param_name, new_num);
+            fprintf(stderr, "Variable %s,unable to convert,got %d after convertion\n", param.param_name, new_num);
             return false;
         }
         if (new_num > MAX_NUMBER|| new_num < MIN_NUMBER){ /* out of numbers range */
-            fprintf(stderr, "Line %d with number %d,out of numbers range,max is %d and min is %d",current_line,new_num,MAX_NUMBER,MIN_NUMBER);
+            fprintf(stderr, "Number %d,out of numbers range,max is %d and min is %d\n",new_num,MAX_NUMBER,MIN_NUMBER);
             return false;
         }
         new_num<<=2; /* make room for 00 */
@@ -69,7 +69,7 @@ bool add_extra_word_single_param(parameter param, bool is_source, int IC, char* 
     } else if (param.address == direct) {
         ///* TODO: need to handle in second pass */
         if((symbol = find_symbol(param.param_name)) == NULL){
-            fprintf(stderr, "Line %d unable to find label %s",current_line,param.param_name);
+            fprintf(stderr, "Unable to find label %s\n",param.param_name);
             return false;
         }
         new_num = symbol->symbol.value;
@@ -116,18 +116,18 @@ void find_parameters(parameter first_param, parameter second_param){
         /* only labels start with char */
         if (isalpha(token[0])){
             if (isReservedWord(token)){
-                fprintf(stderr, "Line %d label reference cannot be a reserved word",current_line);
+                fprintf(stderr, "label reference %s cannot be a reserved word\n",token);
                 return;
             }
             first_param.address = direct;
         } else { /* starts with number so only immediate */
             new_num = strtol(token,&end_ptr,10); /* convert given str to base 10 long */
             if (*end_ptr != '\0'){
-                fprintf(stderr, "Line %d with variable %s,unable to convert,got %d after convertion",current_line, first_param.param_name, new_num);
+                fprintf(stderr, "Variable %s,unable to convert,got %d after convertion\n", first_param.param_name, new_num);
                 return;
             }
             if (new_num > MAX_NUMBER|| new_num < MIN_NUMBER){ /* out of numbers range */
-                fprintf(stderr, "Line %d with number %d,out of numbers range,max is %d and min is %d",current_line,new_num,MAX_NUMBER,MIN_NUMBER);
+                fprintf(stderr, "Number %d,out of numbers range,max is %d and min is %d\n",new_num,MAX_NUMBER,MIN_NUMBER);
                 return;
             }
             first_param.address = direct;
@@ -144,7 +144,7 @@ void find_parameters(parameter first_param, parameter second_param){
         return;
     }
     if (!has_comma){
-        fprintf(stderr, "Line %d missing comma after first parameter",current_line);
+        fprintf(stderr, "Missing comma after first parameter %s\n",first_param.param_name);
         return;
     }
     strcpy(second_param.param_name, token);
@@ -154,18 +154,18 @@ void find_parameters(parameter first_param, parameter second_param){
         /* only labels start with char */
         if (isalpha(token[0])){
             if (isReservedWord(token)){
-                fprintf(stderr, "Line %d label reference cannot be a reserved word",current_line);
+                fprintf(stderr, "Label reference %s cannot be a reserved word\n",token);
                 return;
             }
             second_param.address = direct;
         } else { /* starts with number so only immediate */
             new_num = strtol(token,&end_ptr,10); /* convert given str to base 10 long */
             if (*end_ptr != '\0'){
-                fprintf(stderr, "Line %d with variable %s,unable to convert,got %d after convertion",current_line, second_param.param_name, new_num);
+                fprintf(stderr, "Variable %s,unable to convert,got %d after convertion\n", second_param.param_name, new_num);
                 return;
             }
             if (new_num > MAX_NUMBER|| new_num < MIN_NUMBER){ /* out of numbers range */
-                fprintf(stderr, "Line %d with number %d,out of numbers range,max is %d and min is %d",current_line,new_num,MAX_NUMBER,MIN_NUMBER);
+                fprintf(stderr, "Number %d,out of numbers range,max is %d and min is %d\n",new_num,MAX_NUMBER,MIN_NUMBER);
                 return;
             }
             second_param.address = direct;
@@ -173,6 +173,6 @@ void find_parameters(parameter first_param, parameter second_param){
     }
     /* check for extreneous text after second parameter */
     if((token = strtok(NULL, " ")) != NULL){
-        fprintf(stderr,"Line %d extreneous text after second parameter",current_line);
+        fprintf(stderr,"Extreneous text after second parameter %s\n",second_param.param_name);
     }
 }

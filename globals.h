@@ -80,6 +80,4 @@ typedef struct parameter_t {
     addressing_type address;
 } parameter;
 
-extern int current_line;
-
 #endif

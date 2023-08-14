@@ -11,7 +11,6 @@
 /* get the file name as an argument, no extension is assumed.*/
 int main (int argc, char* argv[])
 {
-    int current_line;
     char* fileName; /* the file name as given as argument */
     bool pre_proccesor, first_pass, second_pass;
 
