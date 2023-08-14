@@ -44,7 +44,7 @@ bool macro_unfold(char* fileName)
         fclose(file);
         return success_flag;
     }
-    printf("opened both as and am files\n");/*tester remove*/
+
     /* (1) the loop below counts the amount of macros in the file to initialize an efficient table */
     while (fgets(line, MAX_LINE_LEN + 2, file) != NULL)
     {
@@ -88,7 +88,7 @@ bool macro_unfold(char* fileName)
     }
     rewind(file);
     currentLine = 1;
-    printf("finished 1st loop\n");/*tester remvoe*/
+
     /* if macro found in first read create a table to store it */
     if (counter > 0) 
     {
@@ -206,7 +206,7 @@ bool macro_unfold(char* fileName)
                 strcat(macroContent, "\n");
         }
         else
-        if(!skip)/*tester was : !skip*/
+        if(!skip && counter > 0)/*tester was : !skip*/
         {
             fprintf(outputFile, "%s", "\n");
         }

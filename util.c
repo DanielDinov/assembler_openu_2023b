@@ -242,4 +242,4 @@ void write_external_file (symbol_type symbol, char* fileName)
     free(file_name_to_open);
 }
 
-const char delims[] = " \n\t"; /* to ignore while tokenizing*/
+const char delims[4] = " \n\t"; /* to ignore while tokenizing*/
