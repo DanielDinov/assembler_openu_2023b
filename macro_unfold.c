@@ -109,6 +109,7 @@ bool macro_unfold(char* fileName)
         token = strtok(line, delims);
         while (token != NULL)
         {
+            printf("%s\n", token);
             if (counter > 0 && (newMacro = getMacro(MACROS, token)) != NULL)
             {
                 fprintf(outputFile, "%s", newMacro->text);
