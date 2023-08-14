@@ -195,7 +195,9 @@ bool macro_unfold(char* fileName)
             else
             {
                 fprintf(outputFile, "%s", token);
+                printf("%s", token);
                 fprintf(outputFile, "%s", " ");
+                printf("%s", " ");
                 skip = false;
                 token = strtok(NULL, delims);
             }
@@ -210,6 +212,7 @@ bool macro_unfold(char* fileName)
         if(!skip && counter > 0)/*tester was : !skip*/
         {
             fprintf(outputFile, "%s", "\n");
+            printf("%s", "\n");
         }
     }
     rewind(file);
