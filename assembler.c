@@ -28,6 +28,7 @@ int main (int argc, char* argv[])
             continue;
         }
         printf("preprocessor finished\n");
+        exit(0);
         if ((first_pass = firstPass(fileName)) == false)
         {
             printf("ERROR: first pass of %s failed.\n", fileName);
