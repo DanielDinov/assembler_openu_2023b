@@ -27,7 +27,7 @@ bool macro_unfold(char* fileName)
     FILE* file = fopen(outputFileName, "r+");
     if (file == NULL)
     {
-        printf("Failed to open file: %s\n", sourceFileName);
+        printf("Failed to open file: %s in preprocessor stage.\n", sourceFileName);
         success_flag = false;
         free(outputFileName);
         free(sourceFileName);
