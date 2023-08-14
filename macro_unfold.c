@@ -94,6 +94,7 @@ bool macro_unfold(char* fileName)
     {
         MACROS = createMacroTable(counter);
     }
+    token = NULL;
     /* (2) the loop below read the file and insert new macros to the hash table */
     while (fgets(line, MAX_LINE_LEN + 2, file) != NULL)
     {
