@@ -25,7 +25,7 @@ bool macro_unfold(char* fileName)
     char* sourceFileName = str_allocate_cat(fileName, as_extension);
     char* outputFileName = str_allocate_cat(fileName, am_extension); /* file name argument comes with no proper extension, fix it before open file */
 
-    FILE* file = fopen(sourceFileName, "r+");
+    FILE* file = fopen(sourceFileName, "r");
     if (file == NULL)
     {
         printf("Failed to open source file: %s in preprocessor stage.\n", sourceFileName);
