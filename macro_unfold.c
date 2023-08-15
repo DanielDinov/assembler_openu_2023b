@@ -196,17 +196,8 @@ bool macro_unfold(char* fileName)
             /* no macro handling - copy paste to new file */
             else
             {
-                int hasWhitespace = 0;
-                for (int i = 0; token[i]; i++) {
-                    if (isspace(token[i])) {
-                        hasWhitespace = 1;
-                        break;
-                    }
-                }
-
-                if (hasWhitespace) {
-                    printf("this %s came with white space\n", token);
-                }
+                if (strcmp(token, " ") == 0)
+                    token = strtok(NULL, delims);
                 fprintf(outputFile, "%s ", token);
                 skip = false;
                 token = strtok(NULL, delims);
