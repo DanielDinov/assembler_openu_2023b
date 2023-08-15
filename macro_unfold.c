@@ -88,7 +88,7 @@ bool macro_unfold(char* fileName)
     }
     rewind(file);
     currentLine = 1;
-
+    printf("counter: %d\n",counter);
     /* if macro found in first read create a table to store it */
     if (counter > 0) 
     {
@@ -113,7 +113,6 @@ bool macro_unfold(char* fileName)
         token = strtok(line, delims);
         while (token != NULL)
         {
-            printf("%s\n", token);
             if (counter > 0 && (newMacro = getMacro(MACROS, token)) != NULL)
             {
                 fprintf(outputFile, "%s", newMacro->text);
@@ -202,7 +201,6 @@ bool macro_unfold(char* fileName)
             else
             {
                 fprintf(outputFile, "%s ", token);
-                printf("%s ", token);
                 skip = false;
                 token = strtok(NULL, delims);
             }
