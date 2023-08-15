@@ -104,6 +104,11 @@ bool macro_unfold(char* fileName)
             skip = true;
             continue;
         }
+        size_t len = strlen(line);
+        if (len > 0 && line[len - 1] == '\n') {
+            line[len - 1] = '\0'; // Remove the newline character
+        }
+
         token = NULL;
         token = strtok(line, delims);
         while (token != NULL)
