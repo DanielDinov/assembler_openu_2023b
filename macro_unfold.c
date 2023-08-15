@@ -207,7 +207,7 @@ bool macro_unfold(char* fileName)
                 strcat(macroContent, "\n");
         }
         else
-        if(!skip && counter > 0)/*tester was : !skip*/
+        if(!skip)/*tester was : !skip && counter > 0*/
         {
             fprintf(outputFile, "%s", "\n");
         }
