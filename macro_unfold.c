@@ -220,18 +220,7 @@ bool macro_unfold(char* fileName)
     {
         freeMacroTable(MACROS);
     }
-    if (counter == 0)
-    {
-        printf("in this thing\n");
-        while (fgets(line, sizeof(line), outputFile) != NULL) {
-        if (isspace(line[0])) {
-            fseek(outputFile, -1, SEEK_CUR);  
-            fputs(line + 1, outputFile);     
-        } else {
-            fseek(outputFile, 0, SEEK_CUR);  
-        }
-    }
-    }
+
     free(sourceFileName);
     free(outputFileName);
     fclose(outputFile);
