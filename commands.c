@@ -55,8 +55,10 @@ bool add_extra_word_single_param(parameter param, bool is_source, int IC, char* 
         CODE_IMG[word_location] = new_num;
     } else if (param.address == immediate) {
         new_num = convert_to_int(param.param_name);
-            if (new_num == INT_MIN)
+            if (new_num == INT_MIN){
+                printf("here?");
                 return false;
+            }
         new_num<<=2; /* make room for 00 */
         CODE_IMG[word_location] = new_num;
     } else if (param.address == direct) {
@@ -97,7 +99,7 @@ void find_parameters(parameter* first_param, parameter* second_param){
     memset(second_param->param_name, 0, strlen(second_param->param_name));
     first_param->address = adders_error;
     second_param->address = adders_error;
-    if((token = strtok(NULL, " ")) == NULL){
+    if((token = strtok(NULL, delims)) == NULL){
         first_param->address = no_addresing;
         return;
     }
@@ -121,13 +123,13 @@ void find_parameters(parameter* first_param, parameter* second_param){
     }
     
     /* after first param should be a comma */
-    if((token = strtok(NULL, " ")) == NULL || *token == ','){
+    if((token = strtok(NULL, delims)) == NULL || *token == ','){
         // printf("token: %s\n", token);
         second_param->address = no_addresing;
         has_comma = true;
     }
     /* same checks as first param but for second param */
-    if((token = strtok(NULL, " ")) == NULL){
+    if((token = strtok(NULL, delims)) == NULL){
         second_param->address = no_addresing;
         return;
     }
@@ -154,7 +156,7 @@ void find_parameters(parameter* first_param, parameter* second_param){
         }
     }
     /* check for extreneous text after second parameter */
-    if((token = strtok(NULL, " ")) != NULL){
+    if((token = strtok(NULL, delims)) != NULL){
         fprintf(stderr,"Extreneous text after second parameter %s\n",second_param->param_name);
     }
 }

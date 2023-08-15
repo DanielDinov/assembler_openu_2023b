@@ -155,15 +155,16 @@ bool isReservedWord(char* word)
 }
 
 bool is_register(char* word) {
-    printf("register:%s\n",word);
-    
+    // printf("register:%s\n",word);
+    if(word[3] == '\r')
+        word[3] = '\0';
     for (int i = 0; i < sizeof(registers) / sizeof(registers[0]); i++) {
         if (strcmp(word, registers[i]) == 0){
-            printf("true for register:%s\n",word);
+            // printf("true for register:%s\n",word);
             return true;
         }
     }
-    printf("false for register:%s\n",word);
+    // printf("false for register:%s\n",word);
     return false;
 }
 

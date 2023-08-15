@@ -10,9 +10,11 @@ bool firstPass(char* file_name){
     bool success_flag = true, has_label;
     FILE* working_file;
     char symbol_name[SYMBOL_MAX_NAME_SIZE+1];
-    parameter first_param, second_param;
+    parameter *first_param, *second_param;
     cmd* current_cmd;
     machine_word current_machine_word;
+    first_param = malloc(sizeof (parameter));
+    second_param = malloc(sizeof (parameter));
 
     if ((working_file = fopen(file_name_extended, "r")) == NULL){
         printf("Failed to open file %s\n",file_name_extended);
@@ -127,52 +129,53 @@ bool firstPass(char* file_name){
                 success_flag = false;
                 continue; /* continue to avoid NULL access violation */
             }
-            find_parameters(&first_param, &second_param);
-
+            find_parameters(first_param, second_param);
+            printf("first param name:%s addr:%d\n",first_param->param_name,first_param->address);
+            printf("second param name:%s addr:%d\n",second_param->param_name,second_param->address);
             current_machine_word.op_code = current_cmd->op_code;
-            current_machine_word.source = first_param.address;
-            current_machine_word.dest = second_param.address;
+            current_machine_word.source = first_param->address;
+            current_machine_word.dest = second_param->address;
 
             add_machine_word(current_machine_word,ic);
             ic++;
 
             switch (current_cmd->num_of_operands){
             case 0:
-                if (first_param.address != no_addresing){
+                if (first_param->address != no_addresing){
                     fprintf(stderr, "Line %d cmd %s shouldnt receive parameters\n",current_line,current_cmd->command_name);
                     success_flag = false;
                 }
                 break;
             
             case 1:
-                if (first_param.address == no_addresing || second_param.address != no_addresing){
+                if (first_param->address == no_addresing || second_param->address != no_addresing){
                     fprintf(stderr, "Line %d cmd %s should receive 1 parameter\n",current_line,current_cmd->command_name);
                     success_flag = false;
                 }
                 /* direct addressing will be handled in second pass since not enough data currently */
-                if (first_param.address == register_addr || first_param.address == immediate)
-                    if (!add_extra_word_single_param(first_param,false,ic,file_name))
+                if (first_param->address == register_addr || first_param->address == immediate)
+                    if (!add_extra_word_single_param(*first_param,false,ic,file_name))
                         success_flag = false;
                 ic++;
                 break;
             
             case 2:
-                if (first_param.address == no_addresing || second_param.address == no_addresing){
+                if (first_param->address == no_addresing || second_param->address == no_addresing){
                     fprintf(stderr, "Line %d cmd %s should receive 2 parameter\n",current_line,current_cmd->command_name);
                     success_flag = false;
                 }
                 /* when both addressing types are register they share a single word */
-                if (first_param.address == register_addr && second_param.address == register_addr){
-                    add_extra_word_double_param(first_param.param_name, second_param.param_name, ic);
+                if (first_param->address == register_addr && second_param->address == register_addr){
+                    add_extra_word_double_param(first_param->param_name, second_param->param_name, ic);
                     ic++;
                 } else { /* meaning 1 of the addressing type is not register addressing */
-                    if (first_param.address != adders_error && second_param.address != adders_error){
-                        if (first_param.address == register_addr || first_param.address == immediate)
-                            if (!add_extra_word_single_param(first_param,true,ic,file_name))
+                    if (first_param->address != adders_error && second_param->address != adders_error){
+                        if (first_param->address == register_addr || first_param->address == immediate)
+                            if (!add_extra_word_single_param(*first_param,true,ic,file_name))
                                 success_flag = false;
                         ic++;
-                        if (second_param.address == register_addr || second_param.address == immediate)
-                            if (!add_extra_word_single_param(second_param,false,ic,file_name))
+                        if (second_param->address == register_addr || second_param->address == immediate)
+                            if (!add_extra_word_single_param(*second_param,false,ic,file_name))
                                 success_flag = false;
                         ic++;
                     }
@@ -187,6 +190,8 @@ bool firstPass(char* file_name){
         }
 
     }
+    free(first_param);
+    free(second_param);
     rewind(working_file);
     free(file_name_extended);
     fclose(working_file);
