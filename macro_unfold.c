@@ -231,6 +231,7 @@ bool macro_unfold(char* fileName)
         }
     }
     }
+    free(sourceFileName);
     free(outputFileName);
     fclose(outputFile);
     fclose(file);
