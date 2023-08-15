@@ -200,7 +200,7 @@ bool macro_unfold(char* fileName)
                 strcpy(word,token);
                 fprintf(outputFile, "%s", word);
                 printf("%s", word);
-                fprintf(outputFile, "%s", " ");
+                /*fprintf(outputFile, "%s", " ");*/
                 printf("%s", " ");
                 skip = false;
                 memset(word, 0, sizeof(word));
