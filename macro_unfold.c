@@ -57,7 +57,7 @@ bool macro_unfold(char* fileName)
 
         /* if none of the chars is '\n' meaning the line in origin file excceed 80 chars */
         char* lengthTest = strchr(line, '\n');/*TODO: think of a better test for ling length, last line is exception*/
-        if (lengthTest == NULL)
+        if (lengthTest == NULL && strlen(line) == 80)
         {
             printf("ERROR: Excceeding max length of line at line: %d\n", currentLine);
             /*success_flag = false; TODO*/
