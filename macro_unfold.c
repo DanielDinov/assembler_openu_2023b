@@ -88,7 +88,7 @@ bool macro_unfold(char* fileName)
     }
     rewind(file);
     currentLine = 1;
-    printf("counter: %d\n",counter);
+
     /* if macro found in first read create a table to store it */
     if (counter > 0) 
     {
@@ -96,6 +96,7 @@ bool macro_unfold(char* fileName)
     }
 
     /* (2) the loop below read the file and insert new macros to the hash table */
+    token = NULL;
     while (fgets(line, MAX_LINE_LEN + 2, file) != NULL)
     {
         if (lineToIgnore(line))
@@ -196,21 +197,6 @@ bool macro_unfold(char* fileName)
             /* no macro handling - copy paste to new file */
             else
             {
-                int hasWhitespace = 0;
-                for (int i = 0; token[i]; i++) {
-                    if (isspace(token[i])) {
-                        hasWhitespace = 1;
-                        break;
-                    }
-                }
-
-                if (hasWhitespace) {
-                    printf("this %s had only white space", token);
-                }   
-
-                if (strcmp(token, " ") == 0){
-                    printf("its just whitespace\n");
-                    token = strtok(NULL, delims);}
                 fprintf(outputFile, "%s ", token);
                 skip = false;
                 token = strtok(NULL, delims);
