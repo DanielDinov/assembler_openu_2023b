@@ -15,7 +15,7 @@ bool macro_unfold(char* fileName)
 {
     bool openMacro = false, addMacro = false; /* flags for macro handling */
     bool skip = true; /* for printing loop */
-    bool success_flag = true;
+    bool success_flag = true, first_word = true;
     int counter = 0, macroLength = 0, nameLength = 0, currentLine = 1;  /* counters for macro amount and length */
     macroTable* MACROS = NULL;
     macroItem* newMacro = NULL; /* pointer to handle macro items */
@@ -98,13 +98,13 @@ bool macro_unfold(char* fileName)
     token = NULL;
     while (fgets(line, MAX_LINE_LEN + 2, file) != NULL)
     {
+        first_word = true;
         if (lineToIgnore(line))
         {
             currentLine++;
             skip = true;
             continue;
         }
-
         token = strtok(line, delims);
         while (token != NULL)
         {
@@ -195,9 +195,15 @@ bool macro_unfold(char* fileName)
             /* no macro handling - copy paste to new file */
             else
             {
-                fprintf(outputFile, "%s ", token);
+                if (first_word){
+                first_word = false;
+                fprintf(outputFile, "%s", token);
                 skip = false;
-                token = strtok(NULL, delims);
+                token = strtok(NULL, delims);}
+                else{
+                fprintf(outputFile, " %s", token);
+                skip = false;
+                token = strtok(NULL, delims);}
             }
         }
 
@@ -213,8 +219,6 @@ bool macro_unfold(char* fileName)
         }
     }
     rewind(file);
-
-    
 
     if (counter > 0)
     {
