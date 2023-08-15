@@ -93,9 +93,6 @@ bool macro_unfold(char* fileName)
     if (counter > 0) 
     {
         MACROS = createMacroTable(counter);
-        newMacro = createMacro ("ELAD", "cant program");
-        insertMacro (MACROS, newMacro);
-        newMacro = NULL;
     }
     /* (2) the loop below read the file and insert new macros to the hash table */
     token = NULL;
