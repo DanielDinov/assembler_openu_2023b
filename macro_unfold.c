@@ -92,20 +92,24 @@ bool macro_unfold(char* fileName)
     /* if macro found in first read create a table to store it */
     if (counter > 0) 
     {
-        counter++;
         MACROS = createMacroTable(counter);
         newMacro = createMacro ("ELAD", "cant program");
         insertMacro (MACROS, newMacro);
         newMacro = NULL;
     }
-
+    if (counter == 0)
+    {
+        MACROS = createMacroTable(counter);
+        newMacro = createMacro ("ELAD", "cant program");
+        insertMacro (MACROS, newMacro);
+        newMacro = NULL;
+    }
     /* (2) the loop below read the file and insert new macros to the hash table */
     token = NULL;
     while (fgets(line, MAX_LINE_LEN + 2, file) != NULL)
     {
         if (lineToIgnore(line))
         {
-            printf("ignored line %d\n", currentLine);
             currentLine++;
             skip = true;
             continue;
