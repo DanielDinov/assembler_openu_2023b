@@ -99,6 +99,11 @@ bool macro_unfold(char* fileName)
     /* (2) the loop below read the file and insert new macros to the hash table */
     while (fgets(line, MAX_LINE_LEN + 2, file) != NULL)
     {
+        size_t len = strlen(line);
+            if (len > 0 && line[len - 1] == '\n') 
+            {
+                line[len - 1] = '\0'; // Remove the newline character
+            }
         if (lineToIgnore(line))
         {
             currentLine++;
@@ -200,7 +205,7 @@ bool macro_unfold(char* fileName)
                 strcpy(word,token);
                 fprintf(outputFile, "%s", word);
                 printf("%s", word);
-                /*fprintf(outputFile, "%s", " ");*/
+                fprintf(outputFile, "%s", " ");
                 printf("%s", " ");
                 skip = false;
                 memset(word, 0, sizeof(word));
