@@ -80,9 +80,11 @@ macroTable* createMacroTable(int size)
 		exit(0);
 	}
 
-	for (int i = 0; i < table->size; i++)
+	for (int i = 0; i <= table->size; i++)
 	{
+		printf("item %d\n", i);/*tester remove*/
 		table->items[i] = NULL;
+		printf("turned null\n");
 	}
 
 	return table;
@@ -118,8 +120,9 @@ bool searchMacro(macroTable* table, char* macroName)
 	int probsCount = 0; /* to compare to max prob of the table */
 	macroItem* item = table->items[index];
 
-	while (item != NULL)
+	while (item)
 	{
+		printf("item isnt null\n");/*tester remove*/
 		if (strcmp(item->key, macroName) == 0)
 			return true;
 		if (probsCount == table->maxProbs)

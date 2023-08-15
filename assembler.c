@@ -25,7 +25,7 @@ int main (int argc, char* argv[])
     {   
         create_new_symbol_list();
         fileName = argv[i];
-        if ((pre_proccesor = macro_unfold(fileName)) == false)
+        if ((pre_proccesor = preprocessor(fileName)) == false)
         {
             printf("ERROR: pre preprocessor of %s failed.\n", fileName);
             free_list();

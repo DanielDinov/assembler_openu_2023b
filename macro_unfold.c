@@ -6,181 +6,158 @@
 #include "macro_table.h"
 #include "globals.h"
 
-/* gets a file name, unfold macros, remove empty lines, comment lines and extra white space.
-   first read: count how many macros to initialize an efficient table, check rows don't excced 80 chars, and macro names are legal
-   second read: copy content to .am file, insert and unfold macros, get rid of comment and empty lines
-   return false if found errors or couldn't unfold macros, else return true */
-
-bool macro_unfold(char* fileName)
+bool preprocessor (char* file_name)
 {
-    bool openMacro = false, addMacro = false; /* flags for macro handling */
-    bool skip = true; /* for printing loop */
-    bool success_flag = true, first_word = true;
-    int counter = 0, macroLength = 0, nameLength = 0, currentLine = 1;  /* counters for macro amount and length */
-    macroTable* MACROS = NULL;
-    macroItem* newMacro = NULL; /* pointer to handle macro items */
-    char *token = NULL, *macroContent = NULL, *macroName = NULL;
-    char line[MAX_LINE_LEN + 2];
-    char* sourceFileName = str_allocate_cat(fileName, as_extension);
-    char* outputFileName = str_allocate_cat(fileName, am_extension); /* file name argument comes with no proper extension, fix it before open file */
+    bool success_flag = true, open_macro = false, add_macro = false, skip = true, first_word = true;
+    int counter = 0, current_line = 1;
+    char *token = NULL;
+    char line[MAX_LINE_LEN + 2], macro_content[MAX_MACRO_SIZE], macro_name[MACRO_MAX_NAME_SIZE];
+    macroTable* macro_table = NULL;
+    macroItem* macro_item = NULL;
 
-    FILE* file = fopen(sourceFileName, "r");
-    if (file == NULL)
+
+    /* add .as extension and open source file */
+    char* source_file_name = str_allocate_cat(file_name, as_extension);
+    FILE* source_file = fopen(source_file_name, "r");
+    if (source_file == NULL)
     {
-        printf("Failed to open source file: %s in preprocessor stage.\n", sourceFileName);
+        printf("Failed to open source file: %s in preprocessor stage.\n", source_file_name);
         success_flag = false;
-        free(outputFileName);
-        free(sourceFileName);
+        free(source_file_name);
         return success_flag;
     }
+    free(source_file_name);
 
-    FILE* outputFile = fopen(outputFileName, "w");
-    if (outputFile == NULL)
+    /* add .am extension and open output file */
+    char* output_file_name = str_allocate_cat(file_name, am_extension);
+    FILE* output_file = fopen(output_file_name, "w");
+    if (output_file == NULL)
     {
-        printf("Failed to create the am file: %s\n", outputFileName);
+        printf("Failed to create the am file: %s\n", output_file_name);
         success_flag = false;
-        free(outputFileName);
-        free(sourceFileName);
-        fclose(file);
+        free(output_file_name);
+        free(source_file_name);
+        fclose(source_file);
         return success_flag;
     }
+    free(output_file_name);
 
-    /* (1) the loop below counts the amount of macros in the file to initialize an efficient table */
-    while (fgets(line, MAX_LINE_LEN + 2, file) != NULL)
+    while(fgets(line, MAX_LINE_LEN + 2, source_file) != NULL)
     {
-        /* ignore comment and empty lines */
         if (lineToIgnore(line)) 
         {
-            currentLine++;
+            current_line++;
             continue;
         }
 
-        /* if none of the chars is '\n' meaning the line in origin file excceed 80 chars */
-        char* lengthTest = strchr(line, '\n');/*TODO: think of a better test for ling length, last line is exception*/
-        if (lengthTest == NULL && strlen(line) == 80)
-        {
-            printf("ERROR: Excceeding max length of line at line: %d\n", currentLine);
-            /*success_flag = false; TODO*/
-        }
-        lengthTest = NULL;
-
         token = strtok(line, delims);
-        while (token != NULL)
+        while (token)
         {
-            if (addMacro)
+            if (add_macro)
             {
-                if (isReservedWord(token)) /*TODO test it*/
+                if (isReservedWord(token))
                 {
-                    printf("ERROR:at line %d Macro name is illegal (%s is a reserved word)\n", currentLine, token);
+                    printf("ERROR:at line %d Macro name is illegal (%s is a reserved word)\n", current_line, token);
                     success_flag = false;
                 }
                 counter++;
-                addMacro = false;
+                add_macro = false;
             }
             else if (strcmp(token, "mcro") == 0)
             {
-                addMacro = true;
+                add_macro = true;
             }
-
+            
             token = strtok(NULL, delims);
         }
-        currentLine++;
+        current_line++;
     }
-    rewind(file);
-    currentLine = 1;
-
-    /* if macro found in first read create a table to store it */
-    if (counter > 0) 
-    {
-        MACROS = createMacroTable(counter);
-    }
-    /* (2) the loop below read the file and insert new macros to the hash table */
+    rewind (source_file);
     token = NULL;
-    while (fgets(line, MAX_LINE_LEN + 2, file) != NULL)
+    current_line = 1;
+
+    if (counter > 0)
+    {
+        printf("counter: %d\n", counter);
+        macro_table = createMacroTable(counter);
+        macro_name[0] = '\0';
+        macro_content[0] = '\0';
+    }
+
+    while(fgets(line, MAX_LINE_LEN + 2, source_file) != NULL)
     {
         first_word = true;
-        if (lineToIgnore(line))
+        if (lineToIgnore(line)) 
         {
-            currentLine++;
+            current_line++;
             skip = true;
             continue;
         }
         token = strtok(line, delims);
-        while (token != NULL)
+        while(token)
         {
-            if (counter > 0 && (newMacro = getMacro(MACROS, token)) != NULL)
+            if (counter > 0 && (macro_item = getMacro(macro_table, token)) != NULL)
             {
-                fprintf(outputFile, "%s", newMacro->text);
-                skip = false;
+                fprintf(output_file, "%s", macro_item->text);
+                skip = true;
                 token = strtok(NULL, delims);
             }
             else
             /* endmcro: submit the contnet in and reset the string*/
             if ((strcmp(token, "endmcro") == 0) && counter > 0)
             {
-                macroContent[strlen(macroContent) - 1] = '\0';
-                newMacro = createMacro(macroName, macroContent);
-                insertMacro(MACROS, newMacro);
-                openMacro = false;
-                free(macroName);
-                macroName = NULL;
-                free(macroContent);
-                macroContent = NULL;
-                newMacro = NULL;
-                macroLength = 0;
+                macro_item = createMacro(macro_name, macro_content);
+                insertMacro(macro_table, macro_item);
+                open_macro = false;
+                macro_name[0] = '\0';
+                macro_content[0] = '\0';
+                macro_item = NULL;
                 skip = true;
                 token = strtok(NULL, delims);
             }
             else
             /* openMacro: add new words to content buffer*/
-            if (openMacro && counter > 0)
+            if (open_macro && counter > 0)
             {
-                macroLength = macroLength + strlen(token) + 2;
-                if (macroContent == NULL) /* condtion for new macro content */
+                if (macro_content[0] == '\0')/*first word in macro content */
                 {
-                    macroContent = (char*)malloc(macroLength * sizeof(char));
-                    if (macroContent == NULL)
-                    {
-                        printf("macroContent memory allocation failed\n");
-                        exit(0);
-                    }
-                    strcpy(macroContent, token);
-                    strcat(macroContent, " ");
+                    printf("in c3.1, token: %s\n", token);
+                    first_word = false;
+                    strcpy(macro_content, token);
                     skip = true;
                     token = strtok(NULL, delims);
                 }
-                else /* add to an existing macro content */
+                else
                 {
-                    macroContent = realloc(macroContent, macroLength * sizeof(char));
-                    if (macroContent == NULL)
-                    {
-                        printf("macroContent memory allocation failed\n");
-                        exit(0);
-                    }
-                    strcat(macroContent, token);
-                    strcat(macroContent, " ");
+                    printf("in c3.2, token: %s\n", token);
+                    if (!first_word){
+                        printf("in c3.11, token: %s\n", token);
+                        strcat(macro_content, " ");
+                        first_word = false;}
+                    strcat(macro_content, token);
+                    first_word = false;
                     skip = true;
-                    token = strtok(NULL, delims);
+                    token = strtok(NULL, delims); 
                 }
             }
             else
             /* encounterd 'mcro' last iteration: look up in the table, if exist - error, else insert to table */
-            if (addMacro && counter > 0)
+            if (add_macro && counter > 0)
             {
-                if (searchMacro(MACROS, token))
+                if (searchMacro(macro_table, token))
                 {
-                    printf("ERROR: in line %d macro name \"%s\" already exist!\n", currentLine, token);
+                    printf("ERROR: in line %d macro name \"%s\" already exist!\n", current_line, token);
                     success_flag = false;
                     token = strtok(NULL, delims);
                 }
                 else
                 {
-                    nameLength = strlen(token) + 1;
-                    macroName = (char*)malloc(nameLength * sizeof(char));
-                    strcpy(macroName, token);
-                    openMacro = true; /*flag for next iterations to gather macro content*/
-                    addMacro = false;
+                    strcpy(macro_name, token);
+                    macro_name[strlen(token)] = '\0';
+                    open_macro = true; /*flag for next iterations to gather macro content*/
+                    add_macro = false;
                     skip = true;
+                    first_word = false;
                     token = strtok(NULL, delims);
                 }
             }
@@ -188,7 +165,8 @@ bool macro_unfold(char* fileName)
             /* mcro declared, flag up for next iteration to consume it*/
             if ((strcmp(token, "mcro") == 0) && counter > 0)
             {
-                addMacro = true;
+                first_word = false;
+                add_macro = true;
                 skip = true;
                 token = strtok(NULL, delims);
             }
@@ -196,39 +174,37 @@ bool macro_unfold(char* fileName)
             else
             {
                 if (first_word){
-                first_word = false;
-                fprintf(outputFile, "%s", token);
-                skip = false;
-                token = strtok(NULL, delims);}
+                    first_word = false;
+                    fprintf(output_file, "%s", token);
+                    skip = false;
+                    token = strtok(NULL, delims);}
                 else{
-                fprintf(outputFile, " %s", token);
-                skip = false;
-                token = strtok(NULL, delims);}
+                    fprintf(output_file, " %s", token);
+                    skip = false;
+                    token = strtok(NULL, delims);}
             }
         }
 
-        currentLine++;
-        if (openMacro && counter > 0 && macroContent != NULL) /*meaning printed all the macro content and a new line \n*/
+        current_line++;
+        if (open_macro && counter > 0 && macro_content[0] != '\0') /*meaning printed all the macro content and a new line \n*/
         {
-                strcat(macroContent, "\n");
+                strcat(macro_content, "\n");
         }
         else
         if(!skip)/*tester was : !skip && counter > 0*/
         {
-            fprintf(outputFile, "%s", "\n");
+            fprintf(output_file, "%s", "\n");
         }
     }
-    rewind(file);
+    rewind(source_file);
+    rewind(output_file);
 
     if (counter > 0)
     {
-        freeMacroTable(MACROS);
+        freeMacroTable(macro_table);
     }
-
-    free(sourceFileName);
-    free(outputFileName);
-    fclose(outputFile);
-    fclose(file);
+    fclose(source_file);
+    fclose(output_file);
     
     return success_flag;
 }
