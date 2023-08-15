@@ -5,6 +5,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
+#include <limits.h>
 
 /* since a since word is 12 bits this is the max size (2^12-1) to (2^12-1)-1 */
 #define MAX_NUMBER 2047

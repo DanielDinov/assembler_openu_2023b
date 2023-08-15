@@ -100,6 +100,8 @@ bool firstPass(char* file_name){
                 if (!add_symbol_to_list(token,dc,SYMBOL_EXTERN))
                     success_flag = false;
             } else if (strcmp(token, ".entry") == 0){
+                while(token)
+                    token = strtok(NULL,delims);
                 /* here so it wont fall in the next else cluase but will be handled in 2nd pass */
             } else {
                 fprintf(stderr, "Line %d unknown request\n",current_line);
@@ -125,7 +127,7 @@ bool firstPass(char* file_name){
                 success_flag = false;
                 continue; /* continue to avoid NULL access violation */
             }
-            find_parameters(first_param, second_param);
+            find_parameters(&first_param, &second_param);
 
             current_machine_word.op_code = current_cmd->op_code;
             current_machine_word.source = first_param.address;

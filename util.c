@@ -155,10 +155,15 @@ bool isReservedWord(char* word)
 }
 
 bool is_register(char* word) {
+    printf("register:%s\n",word);
+    
     for (int i = 0; i < sizeof(registers) / sizeof(registers[0]); i++) {
-        if (strcmp(word, registers[i]) == 0)
+        if (strcmp(word, registers[i]) == 0){
+            printf("true for register:%s\n",word);
             return true;
+        }
     }
+    printf("false for register:%s\n",word);
     return false;
 }
 
@@ -202,13 +207,15 @@ void format_line(char* word) {
         if (word[i] == ',') {
             line[buffer_index++] = ' ';
             line[buffer_index++] = ',';
+            line[buffer_index++] = ' ';
             continue;
         }
         line[buffer_index++] = word[i];
         in_word = 1;
     }
     /* end string with null terminator */
-    line[buffer_index] = '\0';
+    line[buffer_index-1] = '\0';
+    printf("line: %s\n",line);
     strcpy(word, line);
 }
 
@@ -240,6 +247,33 @@ void write_external_file (symbol_type symbol, char* fileName)
     fprintf(file, "%d\t%s", symbol.value, symbol.name);
     fclose(file);
     free(file_name_to_open);
+}
+
+int convert_to_int(char* word){
+    while (word[0] == ' ')
+        word++;
+    if (word[0] == '\0') {
+    fprintf(stderr, "Input is empty or contains only spaces\n");
+    return INT_MIN;
+    }
+    char* end_ptr;
+    int num;
+    char* str_num = word;
+    if(word[0] == '-')
+        str_num = word + 1;
+    num = strtol(str_num,&end_ptr,10); /* convert given str to base 10 long */
+    if(word[0] == '-')
+        num = num*-1;
+    if (*end_ptr != '\0' && !isspace((unsigned char)*end_ptr)){
+        printf("end_ptr:%s",end_ptr);
+        fprintf(stderr, "Unable to convert %s,got %d after convertion\n", word, num);
+        return INT_MIN;
+    }
+    if (num > MAX_NUMBER|| num < MIN_NUMBER){ /* out of numbers range */
+        fprintf(stderr, "Number %d,out of numbers range,max is %d and min is %d\n",num,MAX_NUMBER,MIN_NUMBER);
+        return INT_MIN;
+    }
+    return num;
 }
 
 const char delims[4] = " \t\n"; /* to ignore while tokenizing*/

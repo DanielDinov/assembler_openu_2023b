@@ -1,4 +1,5 @@
 #include "data_handler.h"
+#include "util.h"
 
 int DATA_IMG[MAX_DATA_SIZE];
 
@@ -8,16 +9,9 @@ bool add_data_num(char* str_num,int dc){
         return false;
     }
     int num;
-    char* end_ptr;
-    num = strtol(str_num,&end_ptr,10); /* convert given str to base 10 long */
-    if (*end_ptr != '\0'){
-        fprintf(stderr, "Variable %s,unable to convert,got %d after convertion\n", str_num, num);
+    num = convert_to_int(str_num);
+    if (num == INT_MIN)
         return false;
-    }
-    if (num > MAX_NUMBER|| num < MIN_NUMBER){ /* out of numbers range */
-        fprintf(stderr, "Number %d,out of numbers range,max is %d and min is %d\n",num,MAX_NUMBER,MIN_NUMBER);
-        return false;
-    }
     /* if here everything is fine,save number and dc will be incremented in the function caller when true is returned */
     DATA_IMG[dc] = num;
     return true;

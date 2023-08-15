@@ -19,6 +19,7 @@ char* str_allocate_cat(char* first_str, char* second_str);
 void format_line(char*);
 void write_entry_file (symbol_type symbol, char* fileName);
 void write_external_file (symbol_type symbol, char* fileName);
+int convert_to_int(char* word);
 const char delims[4];
 
 #endif

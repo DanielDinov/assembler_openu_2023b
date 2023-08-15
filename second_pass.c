@@ -58,7 +58,7 @@ bool secondPass(char* fileName)
                 success_flag = false;
                 continue;
             }
-            find_parameters(first_param, second_param);
+            find_parameters(&first_param, &second_param);
 
             ic++; /* since already added memory word in first pass */
 
