@@ -21,7 +21,6 @@ bool macro_unfold(char* fileName)
     macroItem* newMacro = NULL; /* pointer to handle macro items */
     char *token = NULL, *macroContent = NULL, *macroName = NULL;
     char line[MAX_LINE_LEN + 2];
-    char word[82];
     char* sourceFileName = str_allocate_cat(fileName, as_extension);
     char* outputFileName = str_allocate_cat(fileName, am_extension); /* file name argument comes with no proper extension, fix it before open file */
 
@@ -197,11 +196,9 @@ bool macro_unfold(char* fileName)
             /* no macro handling - copy paste to new file */
             else
             {
-                strcpy(word,token);
-                fprintf(outputFile, "%s ", word);
-                printf("%s", word);
+                fprintf(outputFile, "%s ", token);
+                printf("%s ", token);
                 skip = false;
-                memset(word, 0, sizeof(word));
                 token = strtok(NULL, delims);
             }
         }
