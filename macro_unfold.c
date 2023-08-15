@@ -6,7 +6,7 @@
 #include "macro_table.h"
 #include "globals.h"
 
-/* gets a file pointer and its name, unfold macros, remove empty lines, comment lines and extra white space.
+/* gets a file name, unfold macros, remove empty lines, comment lines and extra white space.
    first read: count how many macros to initialize an efficient table, check rows don't excced 80 chars, and macro names are legal
    second read: copy content to .am file, insert and unfold macros, get rid of comment and empty lines
    return false if found errors or couldn't unfold macros, else return true */
@@ -213,6 +213,8 @@ bool macro_unfold(char* fileName)
         }
     }
     rewind(file);
+
+    
 
     if (counter > 0)
     {
