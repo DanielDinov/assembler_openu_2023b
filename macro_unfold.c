@@ -215,7 +215,6 @@ bool macro_unfold(char* fileName)
         if(!skip && counter > 0)/*tester was : !skip*/
         {
             fprintf(outputFile, "%s", "\n");
-            printf("%s", "\n");
         }
     }
     rewind(file);
