@@ -196,8 +196,9 @@ bool macro_unfold(char* fileName)
             /* no macro handling - copy paste to new file */
             else
             {
-                if (strcmp(token, " ") == 0)
-                    token = strtok(NULL, delims);
+                if (strcmp(token, " ") == 0){
+                    printf("its just whitespace\n");
+                    token = strtok(NULL, delims);}
                 fprintf(outputFile, "%s ", token);
                 skip = false;
                 token = strtok(NULL, delims);
