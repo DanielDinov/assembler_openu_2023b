@@ -100,16 +100,12 @@ bool macro_unfold(char* fileName)
     {
         if (lineToIgnore(line))
         {
+            printf("ignored line %d\n", currentLine);
             currentLine++;
             skip = true;
             continue;
         }
-        size_t len = strlen(line);
-        if (len > 0 && line[len - 1] == '\n') {
-            line[len - 1] = '\0'; // Remove the newline character
-        }
 
-        token = NULL;
         token = strtok(line, delims);
         while (token != NULL)
         {
@@ -169,7 +165,7 @@ bool macro_unfold(char* fileName)
                 }
             }
             else
-            /* encounterd 'mcro' last iteration: look up in the table, if exist - error, else insert */
+            /* encounterd 'mcro' last iteration: look up in the table, if exist - error, else insert to table */
             if (addMacro && counter > 0)
             {
                 if (searchMacro(MACROS, token))
@@ -200,6 +196,17 @@ bool macro_unfold(char* fileName)
             /* no macro handling - copy paste to new file */
             else
             {
+                int hasWhitespace = 0;
+                for (int i = 0; token[i]; i++) {
+                    if (isspace(token[i])) {
+                        hasWhitespace = 1;
+                        break;
+                    }
+                }
+
+                if (hasWhitespace) {
+                    printf("this %s came with white space\n", token);
+                }
                 fprintf(outputFile, "%s ", token);
                 skip = false;
                 token = strtok(NULL, delims);
