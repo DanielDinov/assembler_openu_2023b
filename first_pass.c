@@ -63,8 +63,10 @@ bool firstPass(char* file_name){
         if (token != NULL && token[0] == '.'){
             if (strcmp(token, ".data") == 0){
                 if (has_label){
-                    if (!add_symbol_to_list(symbol_name,dc,SYMBOL_DATA))
-                        success_flag = false;
+                    if (!add_symbol_to_list(symbol_name,dc,SYMBOL_DATA)){
+                    printf("data label fault\n");
+                    success_flag = false;
+                }
                 }
                 if((token = strtok(NULL, delims)) == NULL){
                     fprintf(stderr,"Line %d no parameters after .data line\n",current_line);
@@ -82,8 +84,10 @@ bool firstPass(char* file_name){
                 }
             } else if (strcmp(token, ".string") == 0){
                 if (has_label){
-                    if (!add_symbol_to_list(symbol_name,dc,SYMBOL_DATA))
-                        success_flag = false;
+                    if (!add_symbol_to_list(symbol_name,dc,SYMBOL_DATA)){
+                    printf("string label fault\n");
+                    success_flag = false;
+                }
                 }
                 if((token = strtok(NULL, delims)) == NULL){
                     fprintf(stderr, "Line %d no parameters after .string line\n",current_line);
@@ -99,8 +103,10 @@ bool firstPass(char* file_name){
                     fprintf(stderr, "Line %d no parameters after .extern line\n",current_line);
                     success_flag = false;
                 }
-                if (!add_symbol_to_list(token,dc,SYMBOL_EXTERN))
+                if (!add_symbol_to_list(token,dc,SYMBOL_EXTERN)){
+                    printf("extern label fault\n");
                     success_flag = false;
+                }
             } else if (strcmp(token, ".entry") == 0){
                 while(token)
                     token = strtok(NULL,delims);
@@ -121,26 +127,31 @@ bool firstPass(char* file_name){
         else {
             ///* TODO: handle command type line */
             if (has_label){
-                if (!add_symbol_to_list(symbol_name,dc,SYMBOL_DATA))
+                if (!add_symbol_to_list(symbol_name,dc,SYMBOL_DATA)){
+                    printf("cmd label fault\n");
                     success_flag = false;
+                }
             }
+            // printf("cmd:%s\n",token);
+            // printf("cmd len:%d\n",strlen(token));
             if((current_cmd = find_cmd(token)) == NULL){
                 fprintf(stderr, "Line %d bad command,unable to process %s\n",current_line,token);
                 success_flag = false;
                 continue; /* continue to avoid NULL access violation */
             }
             find_parameters(first_param, second_param);
-            printf("first param name:%s addr:%d\n",first_param->param_name,first_param->address);
-            printf("second param name:%s addr:%d\n",second_param->param_name,second_param->address);
+            // printf("first param name:%s addr:%d\n\n",first_param->param_name,first_param->address);
+            // printf("second param name:%s addr:%d\n\n",second_param->param_name,second_param->address);
             current_machine_word.op_code = current_cmd->op_code;
             current_machine_word.source = first_param->address;
             current_machine_word.dest = second_param->address;
 
             add_machine_word(current_machine_word,ic);
             ic++;
-
             switch (current_cmd->num_of_operands){
             case 0:
+                // printf("first param name:%s addr:%d\n\n",first_param->param_name,first_param->address);
+                // printf("second param name:%s addr:%d\n\n",second_param->param_name,second_param->address);
                 if (first_param->address != no_addresing){
                     fprintf(stderr, "Line %d cmd %s shouldnt receive parameters\n",current_line,current_cmd->command_name);
                     success_flag = false;
@@ -154,8 +165,10 @@ bool firstPass(char* file_name){
                 }
                 /* direct addressing will be handled in second pass since not enough data currently */
                 if (first_param->address == register_addr || first_param->address == immediate)
-                    if (!add_extra_word_single_param(*first_param,false,ic,file_name))
-                        success_flag = false;
+                    if (!add_extra_word_single_param(*first_param,false,ic,file_name)){
+                    printf("extra word case 1 fault\n");
+                    success_flag = false;
+                }
                 ic++;
                 break;
             
@@ -171,12 +184,16 @@ bool firstPass(char* file_name){
                 } else { /* meaning 1 of the addressing type is not register addressing */
                     if (first_param->address != adders_error && second_param->address != adders_error){
                         if (first_param->address == register_addr || first_param->address == immediate)
-                            if (!add_extra_word_single_param(*first_param,true,ic,file_name))
-                                success_flag = false;
+                            if (!add_extra_word_single_param(*first_param,true,ic,file_name)){
+                    printf("extra word case 2 fault first param\n");
+                    success_flag = false;
+                }
                         ic++;
                         if (second_param->address == register_addr || second_param->address == immediate)
-                            if (!add_extra_word_single_param(*second_param,false,ic,file_name))
-                                success_flag = false;
+                            if (!add_extra_word_single_param(*second_param,false,ic,file_name)){
+                    printf("extra word case 1 2nd param\n");
+                    success_flag = false;
+                }
                         ic++;
                     }
                 }

@@ -18,6 +18,9 @@ bool add_data_num(char* str_num,int dc){
 }
 
 int add_data_string(char* string,int dc){
+    // printf("string:%s\n",string);
+    // printf("string[0]:%c\n",string[0]);
+    // printf("string[-1]:%c\n",string[strlen(string) -1]);
     int i = 0;
     if (string[0] != '\"' || string[strlen(string) -1] != '\"'){
         fprintf(stderr, "String variable %s,incorrect format,should start and end with \"\n", string);

@@ -7,6 +7,7 @@
 #include "data_handler.h"
 #include "first_pass.h"
 #include "second_pass.h"
+#include "symbol_table.h"
 
 /* get the file name as an argument, no extension is assumed.*/
 int main (int argc, char* argv[])
@@ -19,25 +20,32 @@ int main (int argc, char* argv[])
 		printf("Usage: %s <filename> <filename> ...\n", argv[0]);
 	}
 	 /* Processing each file name argument */
+    
     for (int i = 1; i < argc; i++) 
-    {
+    {   
+        create_new_symbol_list();
         fileName = argv[i];
         if ((pre_proccesor = macro_unfold(fileName)) == false)
         {
             printf("ERROR: pre preprocessor of %s failed.\n", fileName);
+            free_list();
             continue;
         }
+        
         if ((first_pass = firstPass(fileName)) == false)
         {
             printf("ERROR: first pass of %s failed.\n", fileName);
+            free_list();
             continue;
         }
         printf("first pass finished\n");
         if ((second_pass = secondPass(fileName)) == false)
         {
-            printf("ERROR: first pass of %s failed.\n", fileName);
+            printf("ERROR: second pass of %s failed.\n", fileName);
+            free_list();
             continue;
         }
+        free_list();
         printf("second pass finished\n");
     }
 

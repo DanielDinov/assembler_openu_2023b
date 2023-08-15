@@ -21,7 +21,7 @@ bool secondPass(char* fileName)
     cmd* current_cmd;
     FILE* file;
 
-    if((file = fopen(fileName, "r")) == NULL)
+    if((file = fopen(fileNameExtended, "r")) == NULL)
     {
         printf("Failed to open file %s\n",fileName);
         free(fileNameExtended);
@@ -30,6 +30,7 @@ bool secondPass(char* fileName)
 
 	while (fgets(line, MAX_LINE_LEN + 2, file) != NULL){
         current_line++;
+        format_line(line);
 		token = strtok(line, delims);
 
         if (token[strlen(token) - 1] == ':') /* has label */
