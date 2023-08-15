@@ -201,6 +201,8 @@ bool macro_unfold(char* fileName)
             /* no macro handling - copy paste to new file */
             else
             {
+                size_t leadingSpaces = strspn(token, " \t"); 
+                token += leadingSpaces; 
                 fprintf(outputFile, "%s ", token);
                 printf("%s ", token);
                 skip = false;
