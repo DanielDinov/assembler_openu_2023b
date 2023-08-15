@@ -201,8 +201,6 @@ bool macro_unfold(char* fileName)
             /* no macro handling - copy paste to new file */
             else
             {
-                size_t leadingSpaces = strspn(token, " \t"); 
-                token += leadingSpaces; 
                 fprintf(outputFile, "%s ", token);
                 printf("%s ", token);
                 skip = false;
@@ -227,6 +225,17 @@ bool macro_unfold(char* fileName)
     if (counter > 0)
     {
         freeMacroTable(MACROS);
+    }
+    if (counter == 0)
+    {
+        while (fgets(line, sizeof(line), outputFile) != NULL) {
+        if (isspace(line[0])) {
+            fseek(outputFile, -1, SEEK_CUR);  
+            fputs(line + 1, outputFile);     
+        } else {
+            fseek(outputFile, 0, SEEK_CUR);  
+        }
+    }
     }
     free(outputFileName);
     fclose(outputFile);
