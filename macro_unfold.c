@@ -97,13 +97,6 @@ bool macro_unfold(char* fileName)
         insertMacro (MACROS, newMacro);
         newMacro = NULL;
     }
-    if (counter == 0)
-    {
-        MACROS = createMacroTable(counter);
-        newMacro = createMacro ("ELAD", "cant program");
-        insertMacro (MACROS, newMacro);
-        newMacro = NULL;
-    }
     /* (2) the loop below read the file and insert new macros to the hash table */
     token = NULL;
     while (fgets(line, MAX_LINE_LEN + 2, file) != NULL)
@@ -212,12 +205,12 @@ bool macro_unfold(char* fileName)
         }
 
         currentLine++;
-        if (openMacro && counter > 0 && macroContent != NULL)
+        if (openMacro && counter > 0 && macroContent != NULL) /*meaning printed all the macro content and a new line \n*/
         {
                 strcat(macroContent, "\n");
         }
         else
-        if(!skip && counter > 0)/*tester was : !skip*/
+        if(!skip)/*tester was : !skip*/
         {
             fprintf(outputFile, "%s", "\n");
         }
