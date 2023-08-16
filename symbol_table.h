@@ -13,7 +13,6 @@ typedef enum symbol_attribute_t { SYMBOL_ERROR=-1, SYMBOL_DATA=0, SYMBOL_CODE, S
 typedef struct symbol_type_t {
     char name[SYMBOL_MAX_NAME_SIZE + 1];
     int value;
-    bool printed;
     symbol_attribute attribute;
 } symbol_type;
 
