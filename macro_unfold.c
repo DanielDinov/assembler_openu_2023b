@@ -78,7 +78,6 @@ bool preprocessor (char* file_name)
 
     if (counter > 0)
     {
-        printf("counter: %d\n", counter);
         macro_table = createMacroTable(counter);
         macro_name[0] = '\0';
         macro_content[0] = '\0';
@@ -121,7 +120,6 @@ bool preprocessor (char* file_name)
             {
                 if (macro_content[0] == '\0')/*first word in macro content */
                 {
-                    printf("in c3.1, token: %s\n", token);
                     first_word = false;
                     strcpy(macro_content, token);
                     skip = true;
@@ -129,9 +127,7 @@ bool preprocessor (char* file_name)
                 }
                 else
                 {
-                    printf("in c3.2, token: %s\n", token);
                     if (!first_word){
-                        printf("in c3.11, token: %s\n", token);
                         strcat(macro_content, " ");
                         first_word = false;}
                     strcat(macro_content, token);

@@ -22,6 +22,7 @@ symbol_data* create_new_symbol_data(char name[], int value, symbol_attribute att
     strncpy(data->symbol.name, name, SYMBOL_MAX_NAME_SIZE);
     data->symbol.value = value;
     data->symbol.attribute = attribute;
+    data->symbol.printed = false;
     data->next = NULL;
     return data;
 }
@@ -66,7 +67,7 @@ symbol_data* find_symbol(char name[]) {
     return NULL;  // Symbol not found
 }
 
-bool does_symbol_exist(symbol_data* data) {
+bool does_symbol_exist(symbol_data* data) { /*TODO i think this always return true?*/
     if (symbol_list_instance == NULL || data == NULL) {
         return false;
     }

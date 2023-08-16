@@ -80,11 +80,9 @@ macroTable* createMacroTable(int size)
 		exit(0);
 	}
 
-	for (int i = 0; i <= table->size; i++)
+	for (int i = 0; i < table->size; i++)
 	{
-		printf("item %d\n", i);/*tester remove*/
 		table->items[i] = NULL;
-		printf("turned null\n");
 	}
 
 	return table;

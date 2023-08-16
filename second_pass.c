@@ -21,6 +21,7 @@ bool secondPass(char* fileName)
     cmd* current_cmd;
     FILE* file;
 
+    printf("file name to open: %s\n", fileNameExtended);
     if((file = fopen(fileNameExtended, "r")) == NULL)
     {
         printf("Failed to open file %s\n",fileName);
