@@ -85,6 +85,38 @@ int decimalToBinary(int decimal)
     return binary;
 }
 
+char* decimalToBase64(int decimal) 
+{
+    size_t base64Length = 5; // Max length required for base64 representation of a 32-bit decimal value
+    char* base64 = (char*)malloc(base64Length * sizeof(char));
+    if (base64 == NULL) {
+        return NULL;
+    }
+
+    int value = decimal;
+    size_t j = 0;
+
+    while (value > 0) {
+        base64[j++] = base64Lookup[value & 0x3F];
+        value >>= 6;
+    }
+
+    base64[j] = '\0';
+
+    // Reverse the base64 string
+    size_t start = 0;
+    size_t end = j - 1;
+    while (start < end) {
+        char temp = base64[start];
+        base64[start] = base64[end];
+        base64[end] = temp;
+        start++;
+        end--;
+    }
+
+    return base64;
+}
+
 char* binaryToBase64(const char* binary) 
 {
     size_t binaryLength = strlen(binary);
@@ -222,32 +254,38 @@ void format_line(char* word) {
 
 void write_entry_file (symbol_type symbol, char* fileName)
 {
-    char* file_name_to_open = str_allocate_cat(fileName, entry_extension);
-    FILE* file = fopen(file_name_to_open, "a");
-    if (file == NULL)
-    {
-        printf("ERROR: unable to write into %s\n", file_name_to_open);
+    if (symbol.printed == false){
+        char* file_name_to_open = str_allocate_cat(fileName, entry_extension);
+        FILE* file = fopen(file_name_to_open, "a");
+        if (file == NULL)
+        {
+            printf("ERROR: unable to write into %s\n", file_name_to_open);
+            free(file_name_to_open);
+            exit(0);
+        }
+        fprintf(file, "%d\t%s\n", symbol.value, symbol.name);
+        symbol.printed = true;
+        fclose(file);
         free(file_name_to_open);
-        exit(0);
     }
-    fprintf(file, "%d\t%s", symbol.value, symbol.name);
-    fclose(file);
-    free(file_name_to_open);
 }
 
 void write_external_file (symbol_type symbol, char* fileName)
 {
-    char* file_name_to_open = str_allocate_cat(fileName, external_extension);
-    FILE* file = fopen(file_name_to_open, "a");
-    if (file == NULL)
-    {
-        printf("ERROR: unable to write into %s\n", file_name_to_open);
+    if (find_symbol(symbol.name) == NULL){ /*TODO*/
+        char* file_name_to_open = str_allocate_cat(fileName, external_extension);
+        FILE* file = fopen(file_name_to_open, "a");
+        if (file == NULL)
+        {
+            printf("ERROR: unable to write into %s\n", file_name_to_open);
+            free(file_name_to_open);
+            exit(0);
+        }
+        fprintf(file, "%d\t%s\n", symbol.value, symbol.name);
+        symbol.printed = true;
+        fclose(file);
         free(file_name_to_open);
-        exit(0);
     }
-    fprintf(file, "%d\t%s", symbol.value, symbol.name);
-    fclose(file);
-    free(file_name_to_open);
 }
 
 int convert_to_int(char* word){
