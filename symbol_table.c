@@ -27,11 +27,12 @@ symbol_data* create_new_symbol_data(char name[], int value, symbol_attribute att
 }
 
 bool add_symbol_to_list(char name[], int value, symbol_attribute attribute) {
+    symbol_data* data;
+    symbol_data* current;
     if (symbol_list_instance == NULL) {
         return false;
     }
-    symbol_data* data = create_new_symbol_data(name,value,attribute);
-    symbol_data* current;
+    data = create_new_symbol_data(name,value,attribute);
     if (data == NULL) {
         return false;
     }
@@ -52,41 +53,44 @@ bool add_symbol_to_list(char name[], int value, symbol_attribute attribute) {
 }
 
 symbol_data* find_symbol(char name[]) {
+    symbol_data* current;
     if (symbol_list_instance == NULL) {
         return NULL;
     }
-    symbol_data* current = symbol_list_instance->head;
+    current = symbol_list_instance->head;
     while (current != NULL) {
         if (strcmp(current->symbol.name, name) == 0) {
-            return current;  // Symbol found
+            return current;  /* Symbol found */
         }
         current = current->next;
     }
     
-    return NULL;  // Symbol not found
+    return NULL;  /* Symbol not found */
 }
 
 bool does_symbol_exist(symbol_data* data) {
+    symbol_data* current;
     if (symbol_list_instance == NULL || data == NULL) {
         return false;
     }
-    symbol_data* current = symbol_list_instance->head;
+    current = symbol_list_instance->head;
     while (current != NULL) {
         if (strcmp(current->symbol.name, data->symbol.name) == 0) {
-            return true;  // Symbol exists in the list
+            return true;  /* Symbol exists in the list */
         }
         current = current->next;
     }
     
-    return false;  // Symbol does not exist in the list
+    return false;  /* Symbol does not exist in the list */
 }
 
 void free_list() {
+    symbol_data* current;
+    symbol_data* temp;
     if (symbol_list_instance == NULL) {
         return;
     }
-    symbol_data* current = symbol_list_instance->head;
-    symbol_data* temp;
+    current = symbol_list_instance->head;
     while (current != NULL) {
         temp = current;
         current = current->next;

@@ -1,6 +1,6 @@
 # Compilation macros
  CC = gcc
- CFLAGS = -Wall -ansi -pedantic -std=c11 -ggdb3 # Flags
+ CFLAGS = -Wall -ansi -pedantic -ggdb3 # Flags
  GLOBAL_DEPS = globals.h # Dependencies for everything
  EXE_DEPS = assembler.o util.o macro_table.o macro_unfold.o commands.o data_handler.o symbol_table.o first_pass.o second_pass.o # Deps for exe
  
@@ -36,4 +36,4 @@ symbol_table.o: symbol_table.c symbol_table.h $(GLOBAL_DEPS)
 	$(CC) -c symbol_table.c $(CFLAGS) -o $@
 	
 clean:
-	rm -rf *.o *.am *.ob *.ent *.ext 
+	rm -rf *.o *.am *.ob *.ent *.ext assembler

@@ -11,7 +11,6 @@ char* external_extension;
 
 int decimalToBinary(int decimal);
 char* decimalToBase64(int decimal);
-char* binaryToBase64(const char* binary);
 bool lineToIgnore(char* line);
 bool isReservedWord(char* word);
 bool is_register(char* word);

@@ -14,32 +14,30 @@ bool preprocessor (char* file_name)
     char line[MAX_LINE_LEN + 2], macro_content[MAX_MACRO_SIZE], macro_name[MACRO_MAX_NAME_SIZE];
     macroTable* macro_table = NULL;
     macroItem* macro_item = NULL;
-
-
-    /* add .as extension and open source file */
     char* source_file_name = str_allocate_cat(file_name, as_extension);
+    char* output_file_name = str_allocate_cat(file_name, am_extension);
+
+    /* add .as  and .am extension and open source and output file */
     FILE* source_file = fopen(source_file_name, "r");
+    FILE* output_file = fopen(output_file_name, "w");
     if (source_file == NULL)
     {
         printf("Failed to open source file: %s in preprocessor stage.\n", source_file_name);
         success_flag = false;
         free(source_file_name);
+        free(output_file_name);
         return success_flag;
     }
-    free(source_file_name);
-
-    /* add .am extension and open output file */
-    char* output_file_name = str_allocate_cat(file_name, am_extension);
-    FILE* output_file = fopen(output_file_name, "w");
     if (output_file == NULL)
     {
         printf("Failed to create the am file: %s\n", output_file_name);
         success_flag = false;
-        free(output_file_name);
         free(source_file_name);
+        free(output_file_name);
         fclose(source_file);
         return success_flag;
     }
+    free(source_file_name);
     free(output_file_name);
 
     while(fgets(line, MAX_LINE_LEN + 2, source_file) != NULL)

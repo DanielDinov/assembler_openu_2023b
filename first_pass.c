@@ -20,7 +20,7 @@ bool firstPass(char* file_name){
         return false; /* nothing to continue with */
     }
     while (fgets(line, MAX_LINE_LEN+1, working_file) != NULL){
-        ///* TODO: reset variables */
+        /* TODO: reset variables */
 
         has_label = false;
         strcpy(tmp_line_for_display,line);
@@ -123,23 +123,20 @@ bool firstPass(char* file_name){
         }
         /* if here meaning command type line */
         else {
-            ///* TODO: handle command type line */
+            /* TODO: handle command type line */
             if (has_label){
                 if (!add_symbol_to_list(symbol_name,ic+START_ADDRESS,SYMBOL_DATA)){
                     printf("cmd label fault\n");
                     success_flag = false;
                 }
             }
-            // printf("cmd:%s\n",token);
-            // printf("cmd len:%d\n",strlen(token));
+
             if((current_cmd = find_cmd(token)) == NULL){
                 fprintf(stderr, "Line %d bad command,unable to process %s\n",current_line,token);
                 success_flag = false;
                 continue; /* continue to avoid NULL access violation */
             }
             find_parameters(&first_param, &second_param);
-            // printf("first param name:%s addr:%d\n\n",first_param.param_name,first_param.address);
-            // printf("second param name:%s addr:%d\n\n",second_param.param_name,second_param.address);
             current_machine_word.op_code = current_cmd->op_code;
             current_machine_word.source = first_param.address;
             current_machine_word.dest = second_param.address;
@@ -148,8 +145,6 @@ bool firstPass(char* file_name){
             ic++;
             switch (current_cmd->num_of_operands){
             case 0:
-                // printf("first param name:%s addr:%d\n\n",first_param.param_name,first_param.address);
-                // printf("second param name:%s addr:%d\n\n",second_param.param_name,second_param.address);
                 if (first_param.address != no_addresing){
                     fprintf(stderr, "Line %d cmd %s shouldnt receive parameters\n",current_line,current_cmd->command_name);
                     success_flag = false;

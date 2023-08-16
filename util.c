@@ -84,14 +84,17 @@ int decimalToBinary(int decimal)
 
 char* decimalToBase64(int decimal) 
 {
-    size_t base64Length = 5; // Max length required for base64 representation of a 32-bit decimal value
+    int value = decimal;
+    char temp;
+    size_t j = 0;
+    size_t start;
+    size_t end;
+    size_t base64Length = 5; 
     char* base64 = (char*)malloc(base64Length * sizeof(char));
+
     if (base64 == NULL) {
         return NULL;
     }
-
-    int value = decimal;
-    size_t j = 0;
 
     while (value > 0) {
         base64[j++] = base64Lookup[value & 0x3F];
@@ -100,11 +103,10 @@ char* decimalToBase64(int decimal)
 
     base64[j] = '\0';
 
-    // Reverse the base64 string
-    size_t start = 0;
-    size_t end = j - 1;
+    start = 0;
+    end = j - 1;
     while (start < end) {
-        char temp = base64[start];
+        temp = base64[start];
         base64[start] = base64[end];
         base64[end] = temp;
         start++;
@@ -114,47 +116,15 @@ char* decimalToBase64(int decimal)
     return base64;
 }
 
-char* binaryToBase64(const char* binary) 
-{
-    size_t binaryLength = strlen(binary);
-    size_t padding = binaryLength % 6 == 0 ? 0 : 6 - (binaryLength % 6);
-    size_t base64Length = ((binaryLength + padding) / 6) * 8 + 1;
-
-    char* base64 = (char*)malloc(base64Length * sizeof(char));
-    if (base64 == NULL) {
-        return NULL;
-    }
-    unsigned int value;
-    size_t i, j;
-    for (i = 0, j = 0; i < binaryLength; i += 6, j += 8) {
-        value = 0;
-        for (size_t k = 0; k < 6; k++) {
-            value <<= 1;
-            if (i + k < binaryLength && binary[i + k] == '1') {
-                value |= 1;
-            }
-        }
-
-        base64[j] = base64Lookup[value >> 2];
-        base64[j + 1] = base64Lookup[(value << 4) & 0x3F];
-    }
-
-    for (i = 0; i < padding; i++) {
-        base64[base64Length - 2 - i] = '=';
-    }
-
-    base64[base64Length - 1] = '\0';
-    return base64;
-}
-
 bool lineToIgnore(char* line)
 {
+    int i;
+
     /* ignore comment lines */
     if (line[0] == ';')
     {
         return true;
     }
-    int i;
     /* ignore empty lines */
     for (i = 0; i < strlen(line); i++)
     {
@@ -284,7 +254,6 @@ int convert_to_int(char* word){
     char* str_num = word;
     while (word[0] == ' ')
         word++;
-    // printf("convert word %s\n",word);
     if (word[0] == '\0') {
         fprintf(stderr, "Input is empty or contains only spaces\n");
         return INT_MIN;
@@ -306,4 +275,4 @@ int convert_to_int(char* word){
     return num;
 }
 
-const char delims[4] = " \t\n"; /* to ignore while tokenizing*/
+const char delims[4] = " \t\n"; /* to ignore while tokenizing */

@@ -10,7 +10,8 @@
 /*hash function for macro table*/
 unsigned long macroHash(int size, char* macroName, unsigned long hash)
 {
-	for (int i = 0; (macroName[i]) != '\0'; i++)
+	int i;
+	for (i = 0; (macroName[i]) != '\0'; i++)
 	{
 		hash = (hash * 31 + macroName[i]) % size;
 	}
@@ -64,6 +65,7 @@ macroItem* createMacro(const char* key, const char* text)
 /*create macro table*/
 macroTable* createMacroTable(int size)
 {
+	int i;
 	macroTable* table = (macroTable*)malloc(sizeof(macroTable));
 	if (table == NULL)
 	{
@@ -80,7 +82,7 @@ macroTable* createMacroTable(int size)
 		exit(0);
 	}
 
-	for (int i = 0; i < table->size; i++)
+	for (i = 0; i < table->size; i++)
 	{
 		table->items[i] = NULL;
 	}
@@ -99,7 +101,8 @@ void freeMacroItem(macroItem* item)
 /*free macro table*/
 void freeMacroTable(macroTable* table)
 {
-	for (int i = 0; i < table->size; i++)
+	int i;
+	for (i = 0; i < table->size; i++)
 	{
 		macroItem* item = table->items[i];
 

@@ -62,7 +62,7 @@ bool add_extra_word_single_param(parameter param, bool is_source, int IC, char* 
         new_num<<=2; /* make room for 00 */
         CODE_IMG[word_location] = new_num;
     } else if (param.address == direct) {
-        ///* TODO: need to handle in second pass */
+        /* TODO: need to handle in second pass */
         if((symbol = find_symbol(param.param_name)) == NULL){
             fprintf(stderr, "Unable to find label %s add_extra_word_single_param\n",param.param_name);
             return false;
@@ -124,7 +124,6 @@ void find_parameters(parameter* first_param, parameter* second_param){
     
     /* after first param should be a comma */
     if((token = strtok(NULL, delims)) == NULL || *token == ','){
-        // printf("token: %s\n", token);
         second_param->address = no_addresing;
         has_comma = true;
     }

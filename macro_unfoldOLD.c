@@ -232,3 +232,36 @@ bool macro_unfold(char* fileName)
     
     return success_flag;
 }
+
+char* binaryToBase64(const char* binary) 
+{
+    size_t binaryLength = strlen(binary);
+    size_t padding = binaryLength % 6 == 0 ? 0 : 6 - (binaryLength % 6);
+    size_t base64Length = ((binaryLength + padding) / 6) * 8 + 1;
+
+    char* base64 = (char*)malloc(base64Length * sizeof(char));
+    if (base64 == NULL) {
+        return NULL;
+    }
+    unsigned int value;
+    size_t i, j;
+    for (i = 0, j = 0; i < binaryLength; i += 6, j += 8) {
+        value = 0;
+        for (size_t k = 0; k < 6; k++) {
+            value <<= 1;
+            if (i + k < binaryLength && binary[i + k] == '1') {
+                value |= 1;
+            }
+        }
+
+        base64[j] = base64Lookup[value >> 2];
+        base64[j + 1] = base64Lookup[(value << 4) & 0x3F];
+    }
+
+    for (i = 0; i < padding; i++) {
+        base64[base64Length - 2 - i] = '=';
+    }
+
+    base64[base64Length - 1] = '\0';
+    return base64;
+}

@@ -4,11 +4,11 @@
 int DATA_IMG[MAX_DATA_SIZE];
 
 bool add_data_num(char* str_num,int dc){
+    int num;
     if (dc>MAX_DATA_SIZE){
         fprintf(stderr, "Variable %s,unable to save,out of bounds exception\n", str_num);
         return false;
     }
-    int num;
     num = convert_to_int(str_num);
     if (num == INT_MIN)
         return false;
@@ -18,9 +18,6 @@ bool add_data_num(char* str_num,int dc){
 }
 
 int add_data_string(char* string,int dc){
-    // printf("string:%s\n",string);
-    // printf("string[0]:%c\n",string[0]);
-    // printf("string[-1]:%c\n",string[strlen(string) -1]);
     int i = 0;
     if (string[0] != '\"' || string[strlen(string) -1] != '\"'){
         fprintf(stderr, "String variable %s,incorrect format,should start and end with \"\n", string);
