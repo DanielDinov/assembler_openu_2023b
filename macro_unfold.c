@@ -85,6 +85,7 @@ bool preprocessor (char* file_name)
 
     while(fgets(line, MAX_LINE_LEN + 2, source_file) != NULL)
     {
+        format_line(line);
         first_word = true;
         if (lineToIgnore(line)) 
         {

@@ -43,7 +43,7 @@ typedef enum op_code_t {
     prn,
     jsr,
     rts,
-    stop,
+    stop
 } op_code_type;
 
 /* define are enum */

@@ -12,6 +12,7 @@
 /* get the file name as an argument, no extension is assumed.*/
 int main (int argc, char* argv[])
 {
+    int i;
     char* fileName; /* the file name as given as argument */
     bool pre_proccesor, first_pass, second_pass;
 
@@ -21,7 +22,7 @@ int main (int argc, char* argv[])
 	}
 	 /* Processing each file name argument */
     
-    for (int i = 1; i < argc; i++) 
+    for (i = 1; i < argc; i++) 
     {   
         create_new_symbol_list();
         fileName = argv[i];

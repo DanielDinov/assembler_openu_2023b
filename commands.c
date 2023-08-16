@@ -70,7 +70,7 @@ bool add_extra_word_single_param(parameter param, bool is_source, int IC, char* 
         new_num = symbol->symbol.value;
         if (symbol->symbol.attribute == SYMBOL_EXTERN){
             new_num<<=2 + external; /* if external then add const for 01 bits in 1-0 location */
-            write_external_file(symbol->symbol, fileName);
+            write_external_file(symbol->symbol.name, word_location, fileName);
         } else {
             /* if not external then label needs reloaction so add the const for 10 bits in 1-0 location */
             new_num<<=2 + realocatable;

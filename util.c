@@ -6,9 +6,6 @@
 #include "globals.h"
 #include "symbol_table.h"
 
-/*
- *
- */
 
 char* am_extension = ".am";
 char* as_extension = ".as";
@@ -127,10 +124,10 @@ char* binaryToBase64(const char* binary)
     if (base64 == NULL) {
         return NULL;
     }
-
+    unsigned int value;
     size_t i, j;
     for (i = 0, j = 0; i < binaryLength; i += 6, j += 8) {
-        unsigned int value = 0;
+        value = 0;
         for (size_t k = 0; k < 6; k++) {
             value <<= 1;
             if (i + k < binaryLength && binary[i + k] == '1') {
@@ -157,9 +154,9 @@ bool lineToIgnore(char* line)
     {
         return true;
     }
-
+    int i;
     /* ignore empty lines */
-    for (int i = 0; i < strlen(line); i++)
+    for (i = 0; i < strlen(line); i++)
     {
         char ch = line[i];
         if (isspace(ch))
@@ -176,7 +173,8 @@ bool lineToIgnore(char* line)
 
 bool isReservedWord(char* word)
 {
-    for (int i = 0; i < sizeof(saved_word_strings) / sizeof(saved_word_strings[0]); i++)
+    int i;
+    for (i = 0; i < sizeof(saved_word_strings) / sizeof(saved_word_strings[0]); i++)
     {
         if (strcmp(word, saved_word_strings[i]) == 0)
         {
@@ -187,22 +185,19 @@ bool isReservedWord(char* word)
 }
 
 bool is_register(char* word) {
-    // printf("register:%s\n",word);
-    // if(word[3] == '\r')
-    //     word[3] = '\0';
-    for (int i = 0; i < sizeof(registers) / sizeof(registers[0]); i++) {
+    int i;
+    for (i = 0; i < sizeof(registers) / sizeof(registers[0]); i++) {
         if (strcmp(word, registers[i]) == 0){
-            // printf("true for register:%s\n",word);
             return true;
         }
     }
-    // printf("false for register:%s\n",word);
     return false;
 }
 
 int isDirective(char* word)
 {
-    for (int i = 0; i < sizeof(directives) / sizeof(directives[0]); i++)
+    int i;
+    for (i = 0; i < sizeof(directives) / sizeof(directives[0]); i++)
     {
         if (strcmp(word, directives[i]) == 0)
         {
@@ -254,50 +249,46 @@ void format_line(char* word) {
 
 void write_entry_file (symbol_type symbol, char* fileName)
 {
-    if (symbol.printed == false){
-        char* file_name_to_open = str_allocate_cat(fileName, entry_extension);
-        FILE* file = fopen(file_name_to_open, "a");
-        if (file == NULL)
-        {
-            printf("ERROR: unable to write into %s\n", file_name_to_open);
-            free(file_name_to_open);
-            exit(0);
-        }
-        fprintf(file, "%d\t%s\n", symbol.value, symbol.name);
-        symbol.printed = true;
-        fclose(file);
+    char* file_name_to_open = str_allocate_cat(fileName, entry_extension);
+    FILE* file = fopen(file_name_to_open, "a");
+    if (file == NULL)
+    {
+        printf("ERROR: unable to write into %s\n", file_name_to_open);
         free(file_name_to_open);
+        exit(0);
     }
+    fprintf(file, "%s\t%d\n", symbol.name, symbol.value);
+    fclose(file);
+    free(file_name_to_open);
+
 }
 
-void write_external_file (symbol_type symbol, char* fileName)
+void write_external_file (char* symbol_name,int word_location, char* fileName)
 {
-    if (find_symbol(symbol.name) == NULL){ /*TODO*/
-        char* file_name_to_open = str_allocate_cat(fileName, external_extension);
-        FILE* file = fopen(file_name_to_open, "a");
-        if (file == NULL)
-        {
-            printf("ERROR: unable to write into %s\n", file_name_to_open);
-            free(file_name_to_open);
-            exit(0);
-        }
-        fprintf(file, "%d\t%s\n", symbol.value, symbol.name);
-        symbol.printed = true;
-        fclose(file);
+    char* file_name_to_open = str_allocate_cat(fileName, external_extension);
+    FILE* file = fopen(file_name_to_open, "a");
+    if (file == NULL)
+    {
+        printf("ERROR: unable to write into %s\n", file_name_to_open);
         free(file_name_to_open);
+        exit(0);
     }
+    fprintf(file, "%s\t%d\n", symbol_name, word_location);
+    fclose(file);
+    free(file_name_to_open);
 }
 
 int convert_to_int(char* word){
-    while (word[0] == ' ')
-        word++;
-    if (word[0] == '\0') {
-    fprintf(stderr, "Input is empty or contains only spaces\n");
-    return INT_MIN;
-    }
     char* end_ptr;
     int num;
     char* str_num = word;
+    while (word[0] == ' ')
+        word++;
+    // printf("convert word %s\n",word);
+    if (word[0] == '\0') {
+        fprintf(stderr, "Input is empty or contains only spaces\n");
+        return INT_MIN;
+    }
     if(word[0] == '-')
         str_num = word + 1;
     num = strtol(str_num,&end_ptr,10); /* convert given str to base 10 long */
