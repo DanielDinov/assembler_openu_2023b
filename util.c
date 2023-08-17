@@ -140,8 +140,23 @@ char* str_allocate_cat(char* first_str, char* second_str)
 
 void format_line(char* word) {
     int i, buffer_index = 0, in_word = 0;
+    bool in_string = false;
     char line[MAX_LINE_LEN];
     for (i = 0; i < strlen(word); i++) {
+        if (word[i] == '\"'){
+            if (!in_string){
+                line[buffer_index++] = '\"';
+                in_string = true;
+            } else {
+                line[buffer_index++] = '\"';
+                in_string = false;
+            }
+            continue;
+        }
+        if (in_string){
+            line[buffer_index++] = word[i];
+            continue;
+        }
         if (word[i] == ' ' || word[i] == '\t' || word[i] == '\r') {
             if (in_word) {
                 line[buffer_index++] = ' ';
