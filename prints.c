@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include "symbol_table.h"
 #include "commands.h"
 #include "data_handler.h"
@@ -157,6 +158,19 @@ char *decimalToBinaryTwosComplement(int decimal) {
     return binaryStr;
 }*/
 
+char* convertToBase64(uint16_t binaryData)
+{
+    const char base64_table[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    static char base64String[2];
+    binaryData &= 0x0FFF;
+
+    base64String[0] = base64_table[(binaryData >> 6) & 0x3F];
+    base64String[1] = base64_table[binaryData & 0x3F];
+    base64String[2] = '\0';
+
+    return base64String;
+}
+
 char *intToBinaryString(int num, int numBits) {
     char *binary = (char *)malloc(numBits + 1);
     int i;
@@ -227,15 +241,13 @@ void printOBJ(char* file_name)
     fprintf(file, "%d %d", IC, DC);
     for (i = 100; i < 100 + IC; i++)
     {
-        b64 = intToBinaryString(CODE_IMG[i],12);
+        b64 = convertToBase64(CODE_IMG[i]);
         fprintf(file, "\n%s", b64);
-        free(b64);
     }
     for (i = 0; i < DC; i++)
     {
-        b64 = intToBinaryString(DATA_IMG[i],12);
+        b64 = convertToBase64(DATA_IMG[i]);
         fprintf(file, "\n%s", b64);
-        free(b64);
     }
     free(object_file_name);
     fclose(file);
