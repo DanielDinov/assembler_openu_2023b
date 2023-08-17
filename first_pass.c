@@ -111,7 +111,7 @@ bool firstPass(char* file_name){
                     fprintf(stderr, "Line %d no parameters after .extern line\n",current_line);
                     success_flag = false;
                 }
-                if (!add_symbol_to_list(token,dc,SYMBOL_EXTERN)){
+                if (!add_symbol_to_list(token,0,SYMBOL_EXTERN)){
                     printf("extern label fault\n");
                     success_flag = false;
                 }
@@ -148,8 +148,13 @@ bool firstPass(char* file_name){
             }
             find_parameters(&first_param, &second_param);
             current_machine_word.op_code = current_cmd->op_code;
-            current_machine_word.source = first_param.address;
-            current_machine_word.dest = second_param.address;
+            if (second_param.address == no_addresing){
+                current_machine_word.dest = first_param.address;
+                current_machine_word.source = second_param.address;
+            } else {
+                current_machine_word.source = first_param.address;
+                current_machine_word.dest = second_param.address;
+            }
 
             add_machine_word(current_machine_word,ic);
             ic++;

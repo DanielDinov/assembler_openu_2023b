@@ -40,9 +40,9 @@ cmd* find_cmd(char* cmd_name){
 void add_machine_word(machine_word current_word, int IC){
     int word_location = IC + START_ADDRESS;
     int built_word = current_word.source; /* slot 11-9 */
-    built_word <<= 4 + current_word.op_code;  /* slot 8-5 */
-    built_word <<= 3 + current_word.dest; /* slot 4-2 */
-    built_word <<= 2; /* slot 1-0 since encoding is always 00  */
+    built_word = (built_word<< 4) + current_word.op_code;  /* slot 8-5 */
+    built_word = (built_word << 3) + current_word.dest; /* slot 4-2 */
+    built_word = (built_word << 2); /* slot 1-0 since encoding is always 00  */
     CODE_IMG[word_location] = built_word ;
 }
 
@@ -59,7 +59,6 @@ bool add_extra_word_single_param(parameter param, bool is_source, int IC, char* 
     } else if (param.address == immediate) {
         new_num = convert_to_int(param.param_name);
             if (new_num == INT_MIN){
-                printf("here?");
                 return false;
             }
         new_num<<=2; /* make room for 00 */
@@ -72,12 +71,13 @@ bool add_extra_word_single_param(parameter param, bool is_source, int IC, char* 
         }
         new_num = symbol->symbol.value;
         if (symbol->symbol.attribute == SYMBOL_EXTERN){
-            new_num<<=2 + external; /* if external then add const for 01 bits in 1-0 location */
+            new_num= (new_num <<2) + external; /* if external then add const for 01 bits in 1-0 location */
             write_external_file(symbol->symbol.name, word_location, fileName);
         } else {
             /* if not external then label needs reloaction so add the const for 10 bits in 1-0 location */
-            new_num<<=2 + realocatable;
+            new_num= (new_num <<2) + realocatable;
         }
+        CODE_IMG[word_location] = new_num;
     }
     return true;
 }
@@ -88,7 +88,7 @@ void add_extra_word_double_param(char* source, char* dest, int IC){
     /* since checked before that register name are legal, get the register number */
     int new_num = source[2] - '0'; /* setting the first 5 digits 11-7 */
     int reg_2 = dest[2] - '0';
-    new_num <<= 5 + reg_2; /* shifting 5 for the next 5 digits 6-1 */
+    new_num = (new_num<<5) + reg_2; /* shifting 5 for the next 5 digits 6-1 */
     new_num <<= 2; /* last shift of 2 to set all in place, always 00 in digits 1-0 */
     CODE_IMG[word_location] = new_num;
 }
@@ -104,6 +104,7 @@ void find_parameters(parameter* first_param, parameter* second_param){
     second_param->address = adders_error;
     if((token = strtok(NULL, delims)) == NULL){
         first_param->address = no_addresing;
+        second_param->address = no_addresing;
         return;
     }
     strcpy(first_param->param_name, token);

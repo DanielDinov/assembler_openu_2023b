@@ -63,7 +63,6 @@ bool secondPass(char* fileName)
             find_parameters(&first_param, &second_param);
 
             ic++; /* since already added memory word in first pass */
-
             switch (current_cmd -> num_of_operands){
 
                 case 0:
@@ -102,7 +101,7 @@ bool secondPass(char* fileName)
                                     success_flag = false;
                             ic++;
                             if (second_param.address == direct)
-                                if (!add_extra_word_single_param(first_param,false,ic,fileName))
+                                if (!add_extra_word_single_param(second_param,false,ic,fileName))
                                     success_flag = false;
                             ic++;
                         }
