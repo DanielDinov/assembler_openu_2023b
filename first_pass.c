@@ -20,9 +20,19 @@ bool firstPass(char* file_name){
         return false; /* nothing to continue with */
     }
     while (fgets(line, MAX_LINE_LEN+1, working_file) != NULL){
-        /* TODO: reset variables */
-
+        tmp_line_for_display[0] = '\0';
+        symbol_name[0] = '\0';
         has_label = false;
+        first_param.address = -1;
+        first_param.param_name[0] = '\0';
+        second_param.address = -1;
+        second_param.param_name[0] = '\0';
+        current_cmd = NULL;
+        current_machine_word.dest = -1;
+        current_machine_word.encoding = -1;
+        current_machine_word.op_code = -1;
+        current_machine_word.source = -1;
+
         strcpy(tmp_line_for_display,line);
         
         current_line++;
@@ -87,7 +97,7 @@ bool firstPass(char* file_name){
                     success_flag = false;
                 }
                 }
-                if((token = strtok(NULL, delims)) == NULL){
+                if((token = strtok(NULL, "\n")) == NULL){
                     fprintf(stderr, "Line %d no parameters after .string line\n",current_line);
                     success_flag = false;
                 }

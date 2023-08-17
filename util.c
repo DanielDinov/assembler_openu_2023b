@@ -156,6 +156,13 @@ void format_line(char* word) {
             line[buffer_index++] = ' ';
             continue;
         }
+        if (word[i] == ':') {
+            line[buffer_index++] = ':';
+            if (i + 1 < strlen(word) && word[i + 1] != ' ' && word[i + 1] != '\t' && word[i + 1] != '\r' && word[i + 1] != '\n') {
+                line[buffer_index++] = ' ';
+            }
+            continue;
+        }
         line[buffer_index++] = word[i];
         in_word = 1;
     }

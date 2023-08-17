@@ -41,7 +41,7 @@ void write_external_file (char* symbol_name,int word_location, char* fileName)
     free(file_name_to_open);
 }
 
-/*char* decimalToBinaryString(int decimal) {
+char* decimalToBinaryString(int decimal) {
     int i, numBits = sizeof(int) * 8;
     char* binaryStr = (char*)malloc(numBits + 1);
 
@@ -56,7 +56,57 @@ void write_external_file (char* symbol_name,int word_location, char* fileName)
     binaryStr[numBits] = '\0';
 
     return binaryStr;
-}*/
+}
+
+char *decimalToBinaryTwosComplement(int decimal) {
+
+    int numBits = sizeof(int) * 8;
+    int i, sign, index, carry;
+    
+    
+    char *binary = (char *)malloc(numBits + 1); 
+    
+    if (binary == NULL) {
+        printf("Memory allocation failed.\n");
+        exit(1);
+    }
+
+    /* Start by filling the binary string with '0's*/
+    for (i = 0; i < numBits; i++) {
+        binary[i] = '0';
+    }
+    binary[numBits] = '\0'; /* Null-terminate the string */
+    
+    /* Determine the sign of the number */
+    sign = (decimal < 0) ? -1 : 1;
+    decimal *= sign;
+    
+    /* Convert decimal to binary using bitwise operations */
+    index = numBits - 1;
+    while (decimal > 0) {
+        binary[index] = (decimal % 2) + '0';
+        decimal /= 2;
+        index--;
+    }
+    
+    /*Apply 2's complement if the number was negative*/
+    if (sign == -1) {
+        carry = 1;
+        index = numBits - 1;
+        
+        while (index >= 0) {
+            if (binary[index] == '0' && carry == 1) {
+                binary[index] = '1';
+                carry = 0;
+            } else if (binary[index] == '1' && carry == 1) {
+                binary[index] = '0';
+            }
+            index--;
+        }
+    }
+
+    return binary;
+}
 
 /*char* binaryToBase64(const char* binary) 
 {
@@ -91,7 +141,7 @@ void write_external_file (char* symbol_name,int word_location, char* fileName)
     return base64;
 }*/
 
-char* decimalToBinaryString(int decimal, int numBits) {
+/*char* decimalToBinaryString(int decimal, int numBits) {
     char* binaryStr = (char*)malloc(numBits + 1);
     int i;
     if (binaryStr == NULL) {
@@ -105,6 +155,23 @@ char* decimalToBinaryString(int decimal, int numBits) {
     binaryStr[numBits] = '\0';
 
     return binaryStr;
+}*/
+
+char *intToBinaryString(int num, int numBits) {
+    char *binary = (char *)malloc(numBits + 1);
+    int i;
+    
+    if (binary == NULL) {
+        printf("Memory allocation failed.\n");
+        exit(1);
+    }
+
+    for (i = 0; i < numBits; i++) {
+        binary[i] = ((num >> (numBits - i - 1)) & 1) + '0';
+    }
+    binary[numBits] = '\0';
+    
+    return binary;
 }
 
 char* decimalToBase64(int decimal) 
@@ -160,13 +227,13 @@ void printOBJ(char* file_name)
     fprintf(file, "%d %d", IC, DC);
     for (i = 100; i < 100 + IC; i++)
     {
-        b64 = decimalToBinaryString(CODE_IMG[i],12);
+        b64 = intToBinaryString(CODE_IMG[i],12);
         fprintf(file, "\n%s", b64);
         free(b64);
     }
     for (i = 0; i < DC; i++)
     {
-        b64 = decimalToBinaryString(DATA_IMG[i],12);
+        b64 = intToBinaryString(DATA_IMG[i],12);
         fprintf(file, "\n%s", b64);
         free(b64);
     }
