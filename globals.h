@@ -15,8 +15,8 @@
 #define MACRO_MAX_NAME_SIZE 31
 #define MAX_LINE_LEN 80
 #define MAX_DATA_SIZE 1024
-#define MAX_MACRO_SIZE 256
 
+#define IMAGE_PH 0 /*code and data image place holder*/
 #define INITIAL_ADDRESS 100
 
 /* define bool type */

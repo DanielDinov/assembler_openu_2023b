@@ -4,15 +4,13 @@
 #include <ctype.h>
 #include "util.h"
 #include "globals.h"
-#include "symbol_table.h"
 
 
 char* am_extension = ".am";
 char* as_extension = ".as";
 char* entry_extension = ".ent";
 char* external_extension = ".ext";
-
-const char base64Lookup[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+char* object_extension = ".ob";
 
 const char* saved_word_strings[] =
 {
@@ -65,56 +63,6 @@ const char* registers[] =
     "@r6",
     "@r7"
 };
-
-int decimalToBinary(int decimal)
-{
-    int binary = 0;
-    int base = 1;
-
-    while (decimal > 0) 
-    {
-        int remainder = decimal % 2;
-        binary += remainder * base;
-        decimal /= 2;
-        base *= 10;
-    }
-
-    return binary;
-}
-
-char* decimalToBase64(int decimal) 
-{
-    int value = decimal;
-    char temp;
-    size_t j = 0;
-    size_t start;
-    size_t end;
-    size_t base64Length = 5; 
-    char* base64 = (char*)malloc(base64Length * sizeof(char));
-
-    if (base64 == NULL) {
-        return NULL;
-    }
-
-    while (value > 0) {
-        base64[j++] = base64Lookup[value & 0x3F];
-        value >>= 6;
-    }
-
-    base64[j] = '\0';
-
-    start = 0;
-    end = j - 1;
-    while (start < end) {
-        temp = base64[start];
-        base64[start] = base64[end];
-        base64[end] = temp;
-        start++;
-        end--;
-    }
-
-    return base64;
-}
 
 bool lineToIgnore(char* line)
 {
@@ -213,39 +161,7 @@ void format_line(char* word) {
     }
     /* end string with null terminator */
     line[buffer_index-1] = '\0';
-    printf("line: %s\n",line);
     strcpy(word, line);
-}
-
-void write_entry_file (symbol_type symbol, char* fileName)
-{
-    char* file_name_to_open = str_allocate_cat(fileName, entry_extension);
-    FILE* file = fopen(file_name_to_open, "a");
-    if (file == NULL)
-    {
-        printf("ERROR: unable to write into %s\n", file_name_to_open);
-        free(file_name_to_open);
-        exit(0);
-    }
-    fprintf(file, "%s\t%d\n", symbol.name, symbol.value);
-    fclose(file);
-    free(file_name_to_open);
-
-}
-
-void write_external_file (char* symbol_name,int word_location, char* fileName)
-{
-    char* file_name_to_open = str_allocate_cat(fileName, external_extension);
-    FILE* file = fopen(file_name_to_open, "a");
-    if (file == NULL)
-    {
-        printf("ERROR: unable to write into %s\n", file_name_to_open);
-        free(file_name_to_open);
-        exit(0);
-    }
-    fprintf(file, "%s\t%d\n", symbol_name, word_location);
-    fclose(file);
-    free(file_name_to_open);
 }
 
 int convert_to_int(char* word){

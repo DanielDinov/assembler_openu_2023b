@@ -2,9 +2,12 @@
 #include "symbol_table.h"
 #include "util.h"
 #include "globals.h"
+#include "prints.h"
 
 /*TODO out of array boundries check (over 1024)*/
-int CODE_IMG[MAX_DATA_SIZE];
+
+int INS_COUNTER = 0;
+int CODE_IMG[MAX_DATA_SIZE] ={IMAGE_PH};
 
 cmd cmd_table[CMD_SUM] = {
     {"mov", mov, 2},
@@ -158,4 +161,23 @@ void find_parameters(parameter* first_param, parameter* second_param){
     if((token = strtok(NULL, delims)) != NULL){
         fprintf(stderr,"Extreneous text after second parameter %s\n",second_param->param_name);
     }
+}
+
+int getIC()
+{
+    return INS_COUNTER;
+}
+
+void printIC()
+{
+    int i, ic = getIC();
+    for (i = 100; i < 100 + ic; i++)
+    {
+        printf("%d %d\n", i, CODE_IMG[i]);
+    }
+}
+
+void addIC(int counter)
+{
+    INS_COUNTER = counter;
 }

@@ -2,6 +2,8 @@
     "files.associations": {
         "second_pass.h": "c",
         "ctype.h": "c",
-        "macro_unfold.h": "c"
+        "macro_unfold.h": "c",
+        "symbol_table.h": "c",
+        "util.h": "c"
     }
 }

@@ -8,6 +8,7 @@
 #include "first_pass.h"
 #include "second_pass.h"
 #include "symbol_table.h"
+#include "prints.h"
 
 /* get the file name as an argument, no extension is assumed.*/
 int main (int argc, char* argv[])
@@ -48,6 +49,10 @@ int main (int argc, char* argv[])
         }
         free_list();
         printf("second pass finished\n");
+
+        printDC();
+        printIC();
+        printOBJ(fileName);
     }
 
     return 0;

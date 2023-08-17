@@ -1,7 +1,9 @@
 #include "data_handler.h"
 #include "util.h"
+#include "prints.h"
 
-int DATA_IMG[MAX_DATA_SIZE];
+int D_COUNTER = 0;
+int DATA_IMG[MAX_DATA_SIZE] = {IMAGE_PH};
 
 bool add_data_num(char* str_num,int dc){
     int num;
@@ -36,4 +38,21 @@ int add_data_string(char* string,int dc){
     dc++;
     i++;
     return i; /* return the value of i to increment the original dc by that amount */
+}
+
+int getDC()
+{
+    return D_COUNTER;
+}
+void printDC()
+{
+    int i, dc = getDC();
+    for (i = 0; i < dc; i++)
+    {
+        printf("%d %d\n", i, DATA_IMG[i]);
+    }
+}
+void addDC(int counter)
+{
+    D_COUNTER = counter;
 }

@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 #include "util.h"
 #include "macro_table.h"
 #include "globals.h"
@@ -9,9 +8,9 @@
 bool preprocessor (char* file_name)
 {
     bool success_flag = true, open_macro = false, add_macro = false, skip = true, first_word = true;
-    int counter = 0, current_line = 1;
-    char *token = NULL;
-    char line[MAX_LINE_LEN + 2], macro_content[MAX_MACRO_SIZE], macro_name[MACRO_MAX_NAME_SIZE];
+    int counter = 0, macro_length = 0, current_line = 1, temp = 0;
+    char *token = NULL, *macro_content = NULL;
+    char line[MAX_LINE_LEN + 2], macro_name[MACRO_MAX_NAME_SIZE];
     macroTable* macro_table = NULL;
     macroItem* macro_item = NULL;
     char* source_file_name = str_allocate_cat(file_name, as_extension);
@@ -40,6 +39,7 @@ bool preprocessor (char* file_name)
     free(source_file_name);
     free(output_file_name);
 
+    /* first loop counts macros and their lengths to allocate efficient table */
     while(fgets(line, MAX_LINE_LEN + 2, source_file) != NULL)
     {
         if (lineToIgnore(line)) 
@@ -51,6 +51,19 @@ bool preprocessor (char* file_name)
         token = strtok(line, delims);
         while (token)
         {
+            if (strcmp(token, "endmcro") == 0)
+            {
+                if (temp > macro_length)
+                    macro_length = temp;
+                temp = 0;
+                open_macro = false;
+            }
+            else
+            if (open_macro)
+            {
+                temp = temp + strlen(token) + 2;
+            }
+            else
             if (add_macro)
             {
                 if (isReservedWord(token))
@@ -60,6 +73,7 @@ bool preprocessor (char* file_name)
                 }
                 counter++;
                 add_macro = false;
+                open_macro = true;
             }
             else if (strcmp(token, "mcro") == 0)
             {
@@ -70,6 +84,7 @@ bool preprocessor (char* file_name)
         }
         current_line++;
     }
+    /* reset for 2nd loop */
     rewind (source_file);
     token = NULL;
     current_line = 1;
@@ -78,9 +93,9 @@ bool preprocessor (char* file_name)
     {
         macro_table = createMacroTable(counter);
         macro_name[0] = '\0';
-        macro_content[0] = '\0';
     }
 
+    /* 2nd loop gets the macros, insert them to table and unfold */
     while(fgets(line, MAX_LINE_LEN + 2, source_file) != NULL)
     {
         format_line(line);
@@ -108,7 +123,8 @@ bool preprocessor (char* file_name)
                 insertMacro(macro_table, macro_item);
                 open_macro = false;
                 macro_name[0] = '\0';
-                macro_content[0] = '\0';
+                free(macro_content);
+                macro_content = NULL;
                 macro_item = NULL;
                 skip = true;
                 token = strtok(NULL, delims);
@@ -117,8 +133,9 @@ bool preprocessor (char* file_name)
             /* openMacro: add new words to content buffer*/
             if (open_macro && counter > 0)
             {
-                if (macro_content[0] == '\0')/*first word in macro content */
+                if (macro_content == NULL)/*first word in macro content */
                 {
+                    macro_content = (char*)malloc(macro_length * sizeof(char));
                     first_word = false;
                     strcpy(macro_content, token);
                     skip = true;
@@ -181,12 +198,12 @@ bool preprocessor (char* file_name)
         }
 
         current_line++;
-        if (open_macro && counter > 0 && macro_content[0] != '\0') /*meaning printed all the macro content and a new line \n*/
+        if (open_macro && counter > 0 && macro_content != NULL) /*meaning printed all the macro content and a new line \n*/
         {
                 strcat(macro_content, "\n");
         }
         else
-        if(!skip)/*tester was : !skip && counter > 0*/
+        if(!skip)
         {
             fprintf(output_file, "%s", "\n");
         }

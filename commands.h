@@ -19,4 +19,10 @@ void add_extra_word_double_param(char* source, char* dest, int IC);
 
 void find_parameters(parameter* first_param, parameter* second_param);
 
+int getIC();
+
+void printIC();
+
+void addIC(int counter);
+
 #endif

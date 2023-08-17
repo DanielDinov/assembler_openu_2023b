@@ -203,6 +203,8 @@ bool firstPass(char* file_name){
     rewind(working_file);
     free(file_name_extended);
     fclose(working_file);
+    addIC(ic);
+    addDC(dc);
 
     return success_flag;
 }

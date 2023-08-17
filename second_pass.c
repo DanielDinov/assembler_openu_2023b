@@ -6,6 +6,7 @@
 #include "data_handler.h"
 #include "symbol_table.h"
 #include "util.h"
+#include "prints.h"
 
 /* TODO reset to null pointers right after use */
 /* second_pass gets an .am file and access to symbol table to update and finish the code and data images */
@@ -21,7 +22,6 @@ bool secondPass(char* fileName)
     cmd* current_cmd;
     FILE* file;
 
-    printf("file name to open: %s\n", fileNameExtended);
     if((file = fopen(fileNameExtended, "r")) == NULL)
     {
         printf("Failed to open file %s\n",fileName);
