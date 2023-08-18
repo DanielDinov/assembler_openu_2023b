@@ -118,7 +118,7 @@ char* str_allocate_cat(char* first_str, char* second_str)
     char* str = (char*)malloc(strlen(first_str) + strlen(second_str) + 1);
     if (str == NULL)
     {
-        printf("Memory allocation failed\n");
+        printf("ERROR: Memory allocation failed\n");
         exit(0);
     }
     strcpy(str, first_str);
@@ -182,7 +182,7 @@ int convert_to_int(char* word){
     while (word[0] == ' ')
         word++;
     if (word[0] == '\0') {
-        fprintf(stderr, "Input is empty or contains only spaces\n");
+        fprintf(stderr, "ERROR: Input is empty or contains only spaces\n");
         return INT_MIN;
     }
     if(word[0] == '-')
@@ -191,12 +191,11 @@ int convert_to_int(char* word){
     if(word[0] == '-')
         num = num*-1;
     if (*end_ptr != '\0' && !isspace((unsigned char)*end_ptr)){
-        printf("end_ptr:%s",end_ptr);
-        fprintf(stderr, "Unable to convert %s,got %d after convertion\n", word, num);
+        fprintf(stderr, "ERROR: Unable to convert %s,got %d after convertion\n", word, num);
         return INT_MIN;
     }
     if (num > MAX_NUMBER|| num < MIN_NUMBER){ /* out of numbers range */
-        fprintf(stderr, "Number %d,out of numbers range,max is %d and min is %d\n",num,MAX_NUMBER,MIN_NUMBER);
+        fprintf(stderr, "ERROR: Number %d,out of numbers range,max is %d and min is %d\n",num,MAX_NUMBER,MIN_NUMBER);
         return INT_MIN;
     }
     return num;
