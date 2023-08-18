@@ -115,7 +115,7 @@ void find_parameters(parameter* first_param, parameter* second_param){
         /* only labels start with char */
         if (isalpha(token[0])){
             if (isReservedWord(token)){
-                fprintf(stderr, "label reference %s cannot be a reserved word find_parameters\n",token);
+                fprintf(stderr, "ERROR: label reference %s cannot be a reserved word find_parameters\n",token);
                 return;
             }
             first_param->address = direct;
@@ -138,7 +138,7 @@ void find_parameters(parameter* first_param, parameter* second_param){
         return;
     }
     if (!has_comma){
-        fprintf(stderr, "Missing comma after first parameter %s find_parameters has comma\n",first_param->param_name);
+        fprintf(stderr, "ERROR: Missing comma after first parameter %s find_parameters has comma\n",first_param->param_name);
         return;
     }
     strcpy(second_param->param_name, token);
@@ -148,7 +148,7 @@ void find_parameters(parameter* first_param, parameter* second_param){
         /* only labels start with char */
         if (isalpha(token[0])){
             if (isReservedWord(token)){
-                fprintf(stderr, "Label reference %s cannot be a reserved word find_parameters\n",token);
+                fprintf(stderr, "ERROR: Label reference %s cannot be a reserved word find_parameters\n",token);
                 return;
             }
             second_param->address = direct;
@@ -161,7 +161,7 @@ void find_parameters(parameter* first_param, parameter* second_param){
     }
     /* check for extreneous text after second parameter */
     if((token = strtok(NULL, delims)) != NULL){
-        fprintf(stderr,"Extreneous text after second parameter %s\n",second_param->param_name);
+        fprintf(stderr,"ERROR: Extreneous text after second parameter %s\n",second_param->param_name);
     }
 }
 

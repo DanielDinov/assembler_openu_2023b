@@ -73,7 +73,7 @@ bool firstPass(char* file_name){
             if (strcmp(token, ".data") == 0){
                 if (has_label){
                     if (!add_symbol_to_list(symbol_name,dc+ic+START_ADDRESS,SYMBOL_DATA)){
-                    printf("data label fault\n");
+                    printf("ERROR: data label fault\n");
                     success_flag = false;
                 }
                 }
@@ -109,11 +109,11 @@ bool firstPass(char* file_name){
                 } else { dc+=dc_incerement; }
             } else if (strcmp(token, ".extern") == 0){
                 if((token = strtok(NULL, delims)) == NULL){
-                    fprintf(stderr, "Line %d no parameters after .extern line\n",current_line);
+                    fprintf(stderr, "ERROR: Line %d no parameters after .extern line\n",current_line);
                     success_flag = false;
                 }
                 if (!add_symbol_to_list(token,0,SYMBOL_EXTERN)){
-                    printf("extern label fault\n");
+                    printf("ERROR: extern label fault\n");
                     success_flag = false;
                 }
             } else if (strcmp(token, ".entry") == 0){
@@ -121,14 +121,14 @@ bool firstPass(char* file_name){
                     token = strtok(NULL,delims);
                 /* here so it wont fall in the next else cluase but will be handled in 2nd pass */
             } else {
-                fprintf(stderr, "Line %d unknown request\n",current_line);
+                fprintf(stderr, "ERROR: Line %d unknown request\n",current_line);
                 success_flag = false;
                 /* clears token to not fall in the extraneous text clause */
                 while(token)
                     token = strtok(NULL,delims);
             }
             if ((token = strtok(NULL, delims)) != NULL){
-                fprintf(stderr, "Line %d extraneous text after request\n",current_line);
+                fprintf(stderr, "ERROR: Line %d extraneous text after request\n",current_line);
                 success_flag = false;
             }
         }
@@ -136,7 +136,7 @@ bool firstPass(char* file_name){
         else {
             if (has_label){
                 if (!add_symbol_to_list(symbol_name,ic+START_ADDRESS,SYMBOL_DATA)){
-                    printf("cmd label fault\n");
+                    printf("ERROR: cmd label fault\n");
                     success_flag = false;
                 }
             }
@@ -176,7 +176,7 @@ bool firstPass(char* file_name){
                 /* direct addressing will be handled in second pass since not enough data currently */
                 if (first_param.address == register_addr || first_param.address == immediate)
                     if (!add_extra_word_single_param(first_param,false,ic,file_name)){
-                    printf("extra word case 1 fault\n");
+                    printf("ERROR: extra word case 1 fault\n");
                     success_flag = false;
                 }
                 ic++;
@@ -184,7 +184,7 @@ bool firstPass(char* file_name){
             
             case 2:
                 if (first_param.address == no_addresing || second_param.address == no_addresing){
-                    fprintf(stderr, "Line %d cmd %s should receive 2 parameter\n",current_line,current_cmd->command_name);
+                    fprintf(stderr, "ERROR: Line %d cmd %s should receive 2 parameter\n",current_line,current_cmd->command_name);
                     success_flag = false;
                 }
                 /* when both addressing types are register they share a single word */
@@ -195,13 +195,13 @@ bool firstPass(char* file_name){
                     if (first_param.address != adders_error && second_param.address != adders_error){
                         if (first_param.address == register_addr || first_param.address == immediate)
                             if (!add_extra_word_single_param(first_param,true,ic,file_name)){
-                    printf("extra word case 2 fault first param\n");
+                    printf("ERROR: extra word case 2 fault first param\n");
                     success_flag = false;
                 }
                         ic++;
                         if (second_param.address == register_addr || second_param.address == immediate)
                             if (!add_extra_word_single_param(second_param,false,ic,file_name)){
-                    printf("extra word case 1 2nd param\n");
+                    printf("ERROR: extra word case 1 2nd param\n");
                     success_flag = false;
                 }
                         ic++;

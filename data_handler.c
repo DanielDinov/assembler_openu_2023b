@@ -10,7 +10,7 @@ int DATA_IMG[MAX_DATA_SIZE] = {IMAGE_PH};
 bool add_data_num(char* str_num,int dc){
     int num;
     if (dc>MAX_DATA_SIZE){
-        fprintf(stderr, "Variable %s,unable to save,out of bounds exception\n", str_num);
+        fprintf(stderr, "ERORR: Variable %s,unable to save,out of bounds exception\n", str_num);
         return false;
     }
     num = convert_to_int(str_num);

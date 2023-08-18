@@ -9,14 +9,14 @@ void create_new_symbol_list() {
     if (symbol_list_instance != NULL) {
         symbol_list_instance->head = NULL;
     } else {
-        fprintf(stderr, "Unable to allocate memory for symbol_list_instance\n");
+        fprintf(stderr, "ERROR: Unable to allocate memory for symbol_list_instance\n");
     }
 }
 
 symbol_data* create_new_symbol_data(char name[], int value, symbol_attribute attribute) {
     symbol_data* data = (symbol_data*)malloc(sizeof(symbol_data));
     if (data == NULL) {
-        fprintf(stderr, "Unable to allocate memory for symbol\n");
+        fprintf(stderr, "ERROR: Unable to allocate memory for symbol\n");
         return NULL;
     }
     strncpy(data->symbol.name, name, SYMBOL_MAX_NAME_SIZE);
@@ -37,7 +37,7 @@ bool add_symbol_to_list(char name[], int value, symbol_attribute attribute) {
         return false;
     }
     if (does_symbol_exist(data)){
-        fprintf(stderr, "symbol %s already exists\n",data->symbol.name);
+        fprintf(stderr, "ERORR: symbol %s already exists\n",data->symbol.name);
         return false;
     }
     if (symbol_list_instance->head == NULL) {
