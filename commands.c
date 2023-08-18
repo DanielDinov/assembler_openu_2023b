@@ -4,7 +4,6 @@
 #include "globals.h"
 #include "prints.h"
 
-/*TODO out of array boundries check (over 1024)*/
 /* commands is a data structre to store and manage the code image */
 
 int INS_COUNTER = 0;

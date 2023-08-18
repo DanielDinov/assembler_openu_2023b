@@ -27,7 +27,7 @@ int main (int argc, char* argv[])
         fileName = argv[i];
         if ((pre_proccesor = preprocessor(fileName)) == false)
         {
-            printf("ERROR: pre preprocessor of %s failed.\n", fileName);
+            printf("ERROR: preprocessor of %s failed.\n", fileName);
             free_list();
             removeOutputs(fileName);
             continue;
