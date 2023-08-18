@@ -1,10 +1,7 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
 #include "util.h"
 #include "globals.h"
 
+/* util bundles functions that are widely used in the assembler process */
 
 char* am_extension = ".am";
 char* as_extension = ".as";
@@ -44,14 +41,6 @@ const char* saved_word_strings[] =
         "r7"
 };
 
-const char* directives[] =
-{
-    ".date",/*1*/
-    ".string",/*2*/
-    ".entry",/*3*/
-    ".extern"/*4*/
-};
-
 const char* registers[] =
 {
     "@r0",
@@ -64,6 +53,7 @@ const char* registers[] =
     "@r7"
 };
 
+/* comment and empty lines are ignored */
 bool lineToIgnore(char* line)
 {
     int i;
@@ -85,6 +75,17 @@ bool lineToIgnore(char* line)
         {
             return false;
         }
+    }
+    return true;
+}
+
+/* the assembler allows 80 char lines */
+bool lengthTest(char* line)
+{
+    if(strlen(line) > MAX_LINE_LEN)
+    {
+        if (strchr(line, '\n') == NULL)
+            return false;
     }
     return true;
 }
@@ -112,19 +113,6 @@ bool is_register(char* word) {
     return false;
 }
 
-int isDirective(char* word)
-{
-    int i;
-    for (i = 0; i < sizeof(directives) / sizeof(directives[0]); i++)
-    {
-        if (strcmp(word, directives[i]) == 0)
-        {
-            return i+1;
-        }
-    }
-    return 0;
-}
-
 char* str_allocate_cat(char* first_str, char* second_str) 
 {
     char* str = (char*)malloc(strlen(first_str) + strlen(second_str) + 1);
@@ -141,7 +129,7 @@ char* str_allocate_cat(char* first_str, char* second_str)
 void format_line(char* word) {
     int i, buffer_index = 0, in_word = 0;
     bool in_string = false;
-    char line[MAX_LINE_LEN];
+    char line[MAX_LINE_LEN + 3];
     for (i = 0; i < strlen(word); i++) {
         if (word[i] == '\"'){
             if (!in_string){
@@ -182,7 +170,8 @@ void format_line(char* word) {
         in_word = 1;
     }
     /* end string with null terminator */
-    line[buffer_index-1] = '\0';
+    if (line[buffer_index-1] == '\n')
+        line[buffer_index-1] = '\0';
     strcpy(word, line);
 }
 

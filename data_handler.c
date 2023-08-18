@@ -2,6 +2,8 @@
 #include "util.h"
 #include "prints.h"
 
+/* data handler is a data structre to store and manage the data image */
+
 int D_COUNTER = 0;
 int DATA_IMG[MAX_DATA_SIZE] = {IMAGE_PH};
 
@@ -22,7 +24,7 @@ bool add_data_num(char* str_num,int dc){
 int add_data_string(char* string,int dc){
     int i = 0;
     if (string[0] != '\"' || string[strlen(string) -1] != '\"'){
-        fprintf(stderr, "String variable %s,incorrect format,should start and end with \"\n", string);
+        fprintf(stderr, "ERROR: String variable %s,incorrect format,should start and end with \"\n", string);
         return 0;
     }
     for (string++; string[0] != '\"'; string++){
@@ -30,7 +32,7 @@ int add_data_string(char* string,int dc){
         dc++;
         i++;
         if (dc > MAX_DATA_SIZE){
-            fprintf(stderr, "String variable %s,unable to save,out of bounds exception\n",string-dc);
+            fprintf(stderr, "ERROR: String variable %s,unable to save,out of bounds exception\n",string-dc);
             return -1;
         }
     }
@@ -44,14 +46,7 @@ int getDC()
 {
     return D_COUNTER;
 }
-void printDC()
-{
-    int i, dc = getDC();
-    for (i = 0; i < dc; i++)
-    {
-        printf("%d %d\n", i, DATA_IMG[i]);
-    }
-}
+
 void addDC(int counter)
 {
     D_COUNTER = counter;

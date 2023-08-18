@@ -5,6 +5,7 @@
 #include "prints.h"
 
 /*TODO out of array boundries check (over 1024)*/
+/* commands is a data structre to store and manage the code image */
 
 int INS_COUNTER = 0;
 int CODE_IMG[MAX_DATA_SIZE] ={IMAGE_PH};
@@ -37,6 +38,7 @@ cmd* find_cmd(char* cmd_name){
     return NULL; /* return null if not found anything */
 }
 
+/* adding a machine word as decimal representation of the binary word */
 void add_machine_word(machine_word current_word, int IC){
     int word_location = IC + START_ADDRESS;
     int built_word = current_word.source; /* slot 11-9 */
@@ -66,7 +68,7 @@ bool add_extra_word_single_param(parameter param, bool is_source, int IC, char* 
     } else if (param.address == direct) {
         /* TODO: need to handle in second pass */
         if((symbol = find_symbol(param.param_name)) == NULL){
-            fprintf(stderr, "Unable to find label %s add_extra_word_single_param\n",param.param_name);
+            fprintf(stderr, "ERROR in %s:Unable to find label %s add_extra_word_single_param\n", fileName, param.param_name);
             return false;
         }
         new_num = symbol->symbol.value;
@@ -167,15 +169,6 @@ void find_parameters(parameter* first_param, parameter* second_param){
 int getIC()
 {
     return INS_COUNTER;
-}
-
-void printIC()
-{
-    int i, ic = getIC();
-    for (i = 100; i < 100 + ic; i++)
-    {
-        printf("%d %d\n", i, CODE_IMG[i]);
-    }
 }
 
 void addIC(int counter)

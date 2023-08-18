@@ -5,7 +5,6 @@
 
 #define CMD_SUM 16
 #define START_ADDRESS 100
-#define SYMBOL_PLACE_HOLDER 0
 
 int CODE_IMG[MAX_DATA_SIZE];
 
@@ -20,8 +19,6 @@ void add_extra_word_double_param(char* source, char* dest, int IC);
 void find_parameters(parameter* first_param, parameter* second_param);
 
 int getIC();
-
-void printIC();
 
 void addIC(int counter);
 

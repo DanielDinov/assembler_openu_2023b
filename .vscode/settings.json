@@ -4,6 +4,8 @@
         "ctype.h": "c",
         "macro_unfold.h": "c",
         "symbol_table.h": "c",
-        "util.h": "c"
+        "util.h": "c",
+        "globals.h": "c",
+        "data_handler.h": "c"
     }
 }

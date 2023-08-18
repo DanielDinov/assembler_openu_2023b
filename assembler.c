@@ -1,8 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include "util.h"
 #include "globals.h"
-#include "macro_unfold.h"
+#include "preprocessor.h"
 #include "commands.h"
 #include "data_handler.h"
 #include "first_pass.h"
@@ -10,7 +8,7 @@
 #include "symbol_table.h"
 #include "prints.h"
 
-/* get the file name as an argument, no extension is assumed.*/
+/* assembler gets file names through terminal and proccess them one at a time, assuming file name given with no extension */
 int main (int argc, char* argv[])
 {
     int i;
@@ -31,27 +29,25 @@ int main (int argc, char* argv[])
         {
             printf("ERROR: pre preprocessor of %s failed.\n", fileName);
             free_list();
+            removeOutputs(fileName);
             continue;
         }
-        
         if ((first_pass = firstPass(fileName)) == false)
         {
             printf("ERROR: first pass of %s failed.\n", fileName);
             free_list();
+            removeOutputs(fileName);
             continue;
         }
-        printf("first pass finished\n");
         if ((second_pass = secondPass(fileName)) == false)
         {
             printf("ERROR: second pass of %s failed.\n", fileName);
             free_list();
+            removeOutputs(fileName);
             continue;
         }
         free_list();
-        printf("second pass finished\n");
 
-        printDC();
-        printIC();
         printOBJ(fileName);
     }
 

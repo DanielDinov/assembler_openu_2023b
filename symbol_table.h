@@ -7,20 +7,16 @@
 /* all possible label types */
 enum label_types { DATA=0, STRING, ENTRY, EXTERN};
 
-
 typedef enum symbol_attribute_t { SYMBOL_ERROR=-1, SYMBOL_DATA=0, SYMBOL_CODE, SYMBOL_ENTRY, SYMBOL_EXTERN} symbol_attribute;
-
 typedef struct symbol_type_t {
     char name[SYMBOL_MAX_NAME_SIZE + 1];
     int value;
     symbol_attribute attribute;
 } symbol_type;
-
 typedef struct symbol_data_type {
     symbol_type symbol;
     struct symbol_data_type* next;
 } symbol_data;
-
 typedef struct symbol_list_type {
     struct symbol_data_type* head;
 } symbol_list;

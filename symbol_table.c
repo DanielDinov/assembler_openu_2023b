@@ -1,6 +1,6 @@
-#include <stdlib.h>
-#include <string.h>
 #include "symbol_table.h"
+
+/* symbol table implements linked list to store and manage symbols */
 
 symbol_list* symbol_list_instance = NULL;
 

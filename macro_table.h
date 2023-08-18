@@ -4,9 +4,6 @@
 #include "util.h"
 #include "globals.h"
 
-/* hashing function */
-unsigned long macroHash(int size, char* macroName, unsigned long hash);
-
 /* Defines the HashTable item */
 typedef struct Ht_item
 {
@@ -29,9 +26,6 @@ macroItem* createMacro(const char* key, const char* text);
 
 /* Creates a macro table */
 macroTable* createMacroTable(int size);
-
-/* Frees a macro item */
-void freeMacroItem(macroItem* item);
 
 /* Frees a macro table */
 void freeMacroTable(macroTable* table);

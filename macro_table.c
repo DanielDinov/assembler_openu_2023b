@@ -3,9 +3,9 @@
 #include <string.h>
 #include "util.h"
 #include "globals.h"
+#include "macro_table.h"
 
-/*hash table for macros*/
-/*TODO update function names to be suit */
+/*macro_table is a hash table for macros management */
 
 /*hash function for macro table*/
 unsigned long macroHash(int size, char* macroName, unsigned long hash)
@@ -17,23 +17,6 @@ unsigned long macroHash(int size, char* macroName, unsigned long hash)
 	}
 	return hash;
 }
-
-/*defines the HashTable item*/
-typedef struct Ht_item
-{
-	char* key; /*the macro name*/
-	unsigned long hashValue; /*the hash value*/
-	char* text; /*the macro content*/
-} macroItem;
-
-/*defines the HashTable*/
-typedef struct HashTable
-{
-	macroItem** items;
-	int size;
-	int count;
-	int maxProbs;
-} macroTable;
 
 /*create macro item*/
 macroItem* createMacro(const char* key, const char* text)
@@ -162,7 +145,7 @@ void insertMacro(macroTable* table, macroItem* newItem)
 	{
 		unsigned long index = macroHash(table->size, newItem->key, newItem->hashValue);
 		macroItem* ptr = table->items[index];
-		int probsCount = 1;
+		int probsCount = 1; /* counting how many hashes it takes to insert, for more efficient searches later */
 
 		while (ptr != NULL)
 		{

@@ -1,19 +1,15 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
 #include "commands.h"
 #include "data_handler.h"
 #include "symbol_table.h"
 #include "util.h"
 #include "prints.h"
 
-/* TODO reset to null pointers right after use */
-/* second_pass gets an .am file and access to symbol table to update and finish the code and data images */
+/* second_pass gets file name and reads through the .am file to update and finish the code image of it.
+   if no errors found it returns true, else return false. */
 
 bool secondPass(char* fileName)
 {
-	char line[MAX_LINE_LEN + 2];
+	char line[MAX_LINE_LEN + 3];
 	char* token = NULL, *fileNameExtended = str_allocate_cat (fileName, am_extension);
 	bool success_flag = true;
 	int ic = 0, current_line = 0;
@@ -29,7 +25,7 @@ bool secondPass(char* fileName)
         return false; /* nothing to continue with */
     }
 
-	while (fgets(line, MAX_LINE_LEN + 2, file) != NULL){
+	while (fgets(line, MAX_LINE_LEN + 3, file) != NULL){
         current_line++;
         format_line(line);
 		token = strtok(line, delims);
@@ -115,7 +111,6 @@ bool secondPass(char* fileName)
             }
         }
 	}
-    rewind(file);
     free(fileNameExtended);
     fclose(file);
 
