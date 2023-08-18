@@ -27,24 +27,18 @@ bool firstPass(char* file_name){
 
     while (fgets(line, MAX_LINE_LEN+3, working_file) != NULL){
         /* reset variables block */
-        tmp_line_for_display[0] = '\0';
-        symbol_name[0] = '\0';
         has_label = false;
-        first_param.address = -1;
-        first_param.param_name[0] = '\0';
-        second_param.address = -1;
-        second_param.param_name[0] = '\0';
-        current_cmd = NULL;
-        current_machine_word.dest = -1;
-        current_machine_word.encoding = -1;
-        current_machine_word.op_code = -1;
-        current_machine_word.source = -1;
 
         strcpy(tmp_line_for_display,line);
         
         current_line++;
         format_line(line);
         
+        if (ic+START_ADDRESS>MAX_DATA_SIZE){
+            fprintf(stderr, "ERROR: Line %d need more space then the allowed 1024 words\n",current_line);
+            return false;
+        }
+
         if ((token = strtok(line, delims)) == NULL){
             fprintf(stderr, "ERROR: Line %d failed to handle line %s\n",current_line,tmp_line_for_display);
             success_flag = false;
@@ -140,7 +134,6 @@ bool firstPass(char* file_name){
         }
         /* if here meaning command type line */
         else {
-            /* TODO: handle command type line */
             if (has_label){
                 if (!add_symbol_to_list(symbol_name,ic+START_ADDRESS,SYMBOL_DATA)){
                     printf("cmd label fault\n");
@@ -154,6 +147,8 @@ bool firstPass(char* file_name){
                 continue; /* continue to avoid NULL access violation */
             }
             find_parameters(&first_param, &second_param);
+
+            /* store parameters in machine word */
             current_machine_word.op_code = current_cmd->op_code;
             if (second_param.address == no_addresing){
                 current_machine_word.dest = first_param.address;

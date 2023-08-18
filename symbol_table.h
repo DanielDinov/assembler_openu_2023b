@@ -21,15 +21,22 @@ typedef struct symbol_list_type {
     struct symbol_data_type* head;
 } symbol_list;
 
+/* initialized new symbol list */
 void create_new_symbol_list();
 
+/* creates new symbol data */
 symbol_data* create_new_symbol_data(char[], int, symbol_attribute);
 
+/* adds symbol to symbol list */
 bool add_symbol_to_list(char[], int, symbol_attribute);
 
+/* find symbol inside symbol list */
 symbol_data* find_symbol(char[]);
 
+/* return if a symbol exists inside the list */
 bool does_symbol_exist(symbol_data*);
 
+/* frees list */
 void free_list();
+
 #endif

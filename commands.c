@@ -66,7 +66,6 @@ bool add_extra_word_single_param(parameter param, bool is_source, int IC, char* 
         new_num<<=2; /* make room for 00 */
         CODE_IMG[word_location] = new_num;
     } else if (param.address == direct) {
-        /* TODO: need to handle in second pass */
         if((symbol = find_symbol(param.param_name)) == NULL){
             fprintf(stderr, "ERROR in %s:Unable to find label %s add_extra_word_single_param\n", fileName, param.param_name);
             return false;
